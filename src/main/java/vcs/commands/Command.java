@@ -1,5 +1,7 @@
 package vcs.commands;
 
+import vcs.util.VcsException;
+
 import java.util.List;
 
 /**
@@ -7,5 +9,5 @@ import java.util.List;
  */
 
 public interface Command {
-    void execute(List<String> args);
+    void execute(List<String> args) throws VcsException;
 }
