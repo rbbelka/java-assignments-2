@@ -13,8 +13,8 @@ public class Util {
         return currentDir() + "/.vcs";
     }
 
-    public static String getSerializeFile() {
-        return vcsDir() + "/serialize";
+    public static String getInitFile() {
+        return vcsDir() + "/init";
     }
 
 }

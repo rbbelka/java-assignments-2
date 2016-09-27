@@ -11,8 +11,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import static vcs.util.Util.getSerializeFile;
-import static vcs.util.Util.vcsDir;
+import static vcs.util.Util.getInitFile;
 
 public class Main {
 
@@ -32,32 +31,31 @@ public class Main {
             return;
         }
 
-        if (!checkInit() && !commandName.equals("init")) {
+        if (checkInit())
+            repo = Serializer.deserialize(getInitFile());
+
+        else if (!commandName.equals("init")) {
             initError();
             return;
         }
 
-//        try {
-            if (checkInit())
-                    repo = Serializer.deserialize(getSerializeFile());
+        List<String> cmdArgs = Arrays.asList(args).subList(1, args.length);
+        command.execute(cmdArgs);
 
-            List<String> cmdArgs = Arrays.asList(args).subList(1, args.length);
-            command.execute(cmdArgs);
-
-            Serializer.serialize(repo, getSerializeFile());
-
-//        } catch (Exception e) {
-//                System.out.println(e.getMessage());
-//        }
+        Serializer.serialize(repo, getInitFile());
     }
 
-//    public static Repository getRepo() {
-//        return repo;
-//    }
+    public static Repository getRepo() {
+        return repo;
+    }
 
-    // In assumption that if repo is inited - it has serialize file
+    public static void setRepo(Repository newRepo) {
+        if (newRepo != null)
+            repo = newRepo;
+    }
+
     public static boolean checkInit() {
-        return (new File(vcsDir()).isDirectory() && new File(getSerializeFile()).exists());
+        return (new File(getInitFile()).exists());
     }
 
     private static void inputError() {
