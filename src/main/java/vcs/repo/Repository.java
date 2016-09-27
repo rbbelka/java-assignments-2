@@ -27,4 +27,7 @@ public class Repository implements Serializable {
         return storage.addFile(filename);
     }
 
+    public Storage getStorage() {
+        return storage;
+    }
 }
