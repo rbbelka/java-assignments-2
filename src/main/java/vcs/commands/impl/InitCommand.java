@@ -11,6 +11,7 @@ import java.util.List;
 import static vcs.Main.setRepo;
 import static vcs.util.Util.currentDir;
 import static vcs.util.Util.getInitFile;
+import static vcs.util.Util.vcsDir;
 
 /**
  * @author natalia on 25.09.16.
@@ -20,6 +21,7 @@ public class InitCommand implements Command {
 
     public void execute(List<String> args) throws VcsException, IOException {
 
+        File vcsDir = new File(vcsDir());
         File init = new File(getInitFile());
 
         if (vcs.Main.checkInit()) {
@@ -27,7 +29,12 @@ public class InitCommand implements Command {
             return;
         }
 
+        if (!vcsDir.mkdirs()) {
+            throw new VcsException("Can't create vcs folder");
+        }
+
         if (!init.createNewFile()) {
+            vcsDir.delete();
             throw new VcsException("Can't create init file");
         }
 

@@ -31,10 +31,9 @@ public class Main {
             return;
         }
 
-        if (checkInit())
+        if (checkInit()) {
             repo = Serializer.deserialize(getInitFile());
-
-        else if (!commandName.equals("init")) {
+        } else if (!commandName.equals("init")) {
             initError();
             return;
         }
