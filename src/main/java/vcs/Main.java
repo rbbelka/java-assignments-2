@@ -2,13 +2,23 @@ package vcs;
 
 import vcs.commands.Command;
 import vcs.commands.CommandFactory;
+import vcs.repo.Repository;
+import vcs.util.Serializer;
 import vcs.util.VcsException;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import static vcs.util.Util.getSerializeFile;
+import static vcs.util.Util.vcsDir;
+
 public class Main {
-    public static void main(String[] args) throws VcsException {
+
+    private static Repository repo;
+
+    public static void main(String[] args) throws IOException, ClassNotFoundException, VcsException {
 
         if (args.length < 1) {
             inputError();
@@ -22,13 +32,40 @@ public class Main {
             return;
         }
 
-        List<String> cmdArgs = Arrays.asList(args).subList(1, args.length);
-        command.execute(cmdArgs);
+        if (!checkInit() && !commandName.equals("init")) {
+            initError();
+            return;
+        }
 
+//        try {
+            if (checkInit())
+                    repo = Serializer.deserialize(getSerializeFile());
+
+            List<String> cmdArgs = Arrays.asList(args).subList(1, args.length);
+            command.execute(cmdArgs);
+
+            Serializer.serialize(repo, getSerializeFile());
+
+//        } catch (Exception e) {
+//                System.out.println(e.getMessage());
+//        }
+    }
+
+//    public static Repository getRepo() {
+//        return repo;
+//    }
+
+    // In assumption that if repo is inited - it has serialize file
+    public static boolean checkInit() {
+        return (new File(vcsDir()).isDirectory() && new File(getSerializeFile()).exists());
     }
 
     private static void inputError() {
         System.out.println("Incorrect input");
+    }
+
+    private static void initError() {
+        System.out.println("Not a repository");
     }
 
 }
