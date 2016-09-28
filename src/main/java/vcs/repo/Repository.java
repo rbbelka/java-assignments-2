@@ -23,11 +23,8 @@ public class Repository implements Serializable {
         return new Repository(dir);
     }
 
-    public boolean addFile(String filename) {
-        return storage.addFile(filename);
-    }
-
     public Storage getStorage() {
         return storage;
     }
+
 }

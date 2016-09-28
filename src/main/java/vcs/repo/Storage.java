@@ -10,7 +10,9 @@ import java.util.Set;
 public class Storage implements Serializable {
 
     private final String repoDir;
-    private final Set<String> files = new HashSet<>();
+
+    // list of files under control
+    private final Set<String> controlledFiles = new HashSet<>();
 
     public Storage(String dir) {
         repoDir = dir;
@@ -20,11 +22,15 @@ public class Storage implements Serializable {
         return repoDir;
     }
 
-    public boolean addFile(String filename) {
-        return files.add(filename);
+    public Set<String> getFiles() {
+        return controlledFiles;
     }
 
-    public Set<String> getFiles() {
-        return files;
+    public boolean addFile(String filename) {
+        return controlledFiles.add(filename);
+    }
+
+    public boolean resetFile(String filename) {
+        return controlledFiles.remove(filename);
     }
 }

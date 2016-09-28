@@ -8,10 +8,9 @@ import java.util.List;
 import static vcs.Main.getRepo;
 
 /**
- * @author natalia on 25.09.16.
+ * @author natalia on 28.09.16.
  */
-
-public class AddCommand implements Command {
+public class ResetCommand  implements Command {
     public void execute(List<String> args) {
         for (String arg : args) {
             File f = new File(arg);
@@ -20,8 +19,8 @@ public class AddCommand implements Command {
                 continue;
             }
 
-            if (getRepo().getStorage().addFile(arg))
-                System.out.println("Added " + arg);
+            if (getRepo().getStorage().resetFile(arg))
+                System.out.println("Reset " + arg);
         }
     }
 }
