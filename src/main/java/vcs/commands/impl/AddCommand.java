@@ -3,6 +3,7 @@ package vcs.commands.impl;
 import vcs.commands.Command;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import static vcs.Main.getRepo;
@@ -12,7 +13,7 @@ import static vcs.Main.getRepo;
  */
 
 public class AddCommand implements Command {
-    public void execute(List<String> args) {
+    public void execute(List<String> args) throws IOException {
         for (String arg : args) {
             File f = new File(arg);
             if(!f.isFile() || !f.canRead()) {
@@ -20,8 +21,8 @@ public class AddCommand implements Command {
                 continue;
             }
 
-            if (getRepo().getStorage().addFile(arg))
-                System.out.println("Added " + arg);
+            getRepo().getStorage().addFile(arg);
+            System.out.println("Added " + arg);
         }
     }
 }

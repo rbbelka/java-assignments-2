@@ -9,9 +9,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static vcs.Main.setRepo;
-import static vcs.util.Util.currentDir;
-import static vcs.util.Util.getInitFile;
-import static vcs.util.Util.vcsDir;
+import static vcs.util.Util.*;
 
 /**
  * @author natalia on 25.09.16.
@@ -22,6 +20,7 @@ public class InitCommand implements Command {
     public void execute(List<String> args) throws VcsException, IOException {
 
         File vcsDir = new File(vcsDir());
+        File curDir = new File(curDir());
         File init = new File(getInitFile());
 
         if (vcs.Main.checkInit()) {
@@ -33,12 +32,16 @@ public class InitCommand implements Command {
             throw new VcsException("Can't create vcs folder");
         }
 
+        if (!curDir.mkdirs()) {
+            throw new VcsException("Can't create temp folder");
+        }
+
         if (!init.createNewFile()) {
             vcsDir.delete();
             throw new VcsException("Can't create init file");
         }
 
-        setRepo(Repository.createRepository(currentDir()));
+        setRepo(Repository.createRepository(userDir(), curDir()));
 
         System.out.println("Succesful init");
 

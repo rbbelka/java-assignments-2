@@ -1,5 +1,8 @@
 package vcs.repo;
 
+import vcs.util.Util;
+
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -10,12 +13,14 @@ import java.util.Set;
 public class Storage implements Serializable {
 
     private final String repoDir;
+    private final String сurDir;
 
     // list of files under control
     private final Set<String> controlledFiles = new HashSet<>();
 
-    public Storage(String dir) {
-        repoDir = dir;
+    public Storage(String repoDir, String сurDir) {
+        this.repoDir = repoDir;
+        this.сurDir = сurDir;
     }
 
     public String getRepoDir() {
@@ -26,8 +31,9 @@ public class Storage implements Serializable {
         return controlledFiles;
     }
 
-    public boolean addFile(String filename) {
-        return controlledFiles.add(filename);
+    public void addFile(String filename) throws IOException {
+        Util.copyFileToDir(filename, сurDir);
+        controlledFiles.add(filename);
     }
 
     public boolean resetFile(String filename) {

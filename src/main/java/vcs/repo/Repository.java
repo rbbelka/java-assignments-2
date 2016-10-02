@@ -11,16 +11,16 @@ public class Repository implements Serializable {
 
     private Storage storage;
 
-    private Repository(String dir) throws VcsException {
-        storage = new Storage(dir);
+    private Repository(String dir, String tempDir) throws VcsException {
+        storage = new Storage(dir, tempDir);
     }
 
     public String getDir() {
         return storage.getRepoDir();
     }
 
-    public static Repository createRepository(String dir) throws VcsException {
-        return new Repository(dir);
+    public static Repository createRepository(String dir, String tempDir) throws VcsException {
+        return new Repository(dir, tempDir);
     }
 
     public Storage getStorage() {
