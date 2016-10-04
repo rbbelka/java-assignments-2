@@ -1,6 +1,7 @@
 package vcs.commands.impl;
 
 import vcs.commands.Command;
+import vcs.util.Util;
 import vcs.util.VcsException;
 
 import java.io.File;
@@ -16,11 +17,8 @@ import static vcs.Main.getRepo;
 public class AddCommand implements Command {
     public void execute(List<String> args) throws VcsException {
         for (String arg : args) {
-            File f = new File(arg);
-            if(!f.isFile() || !f.canRead()) {
-                System.out.println("Incorrect path: " + arg);
+            if (! Util.checkFile(arg))
                 continue;
-            }
 
             getRepo().getStorage().addFile(arg);
             System.out.println("Added " + arg);

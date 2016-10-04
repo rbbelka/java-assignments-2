@@ -17,7 +17,7 @@ import static vcs.util.Util.*;
 
 public class InitCommand implements Command {
 
-    public void execute(List<String> args) throws VcsException, IOException {
+    public void execute(List<String> args) throws VcsException {
 
         File vcsDir = new File(vcsDir());
         File curDir = new File(curDir());
@@ -36,9 +36,13 @@ public class InitCommand implements Command {
             throw new VcsException("Can't create temp folder");
         }
 
-        if (!init.createNewFile()) {
-            vcsDir.delete();
-            throw new VcsException("Can't create init file");
+        try {
+            if (!init.createNewFile()) {
+                vcsDir.delete();
+                throw new VcsException("Can't create init file");
+            }
+        } catch (IOException e) {
+            throw new VcsException(e.getMessage());
         }
 
         setRepo(Repository.createRepository(userDir(), curDir()));

@@ -64,4 +64,13 @@ public class Util {
             throw new VcsException(e.getMessage());
         }
     }
+
+    public static boolean checkFile(String arg) {
+        File f = new File(arg);
+        if(!f.isFile() || !f.canRead()) {
+            System.out.println("Incorrect path: " + arg);
+            return false;
+        }
+        return true;
+    }
 }

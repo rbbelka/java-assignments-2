@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class CleanCommand implements Command {
     @Override
-    public void execute(List<String> args) throws VcsException, IOException {
+    public void execute(List<String> args) throws VcsException {
 
     }
 }
