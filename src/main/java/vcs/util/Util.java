@@ -5,6 +5,8 @@ import org.apache.commons.codec.digest.DigestUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.apache.commons.io.FileUtils;
 
@@ -38,16 +40,28 @@ public class Util {
         return md5;
     }
 
-    public static void copyFileToDir(String filename, String dir) throws IOException {
+    public static void copyFileToDir(String filename, String dir) throws VcsException {
         File file = new File(userDir(), filename);
         if (file.exists()) {
+            try {
+                File hashFile = new File(dir, filename + hashSuffix);
+                FileUtils.writeStringToFile(hashFile, getMD5(file));
 
-            File hashFile = new File(dir, filename + hashSuffix);
-            FileUtils.writeStringToFile(hashFile, getMD5(file));
-
-            File newFile = new File(dir, filename);
-            FileUtils.copyFile(file, newFile);
+                File newFile = new File(dir, filename);
+                FileUtils.copyFile(file, newFile);
+            } catch (IOException e) {
+                throw new VcsException(e.getMessage());
+            }
         }
     }
 
+    public static void removeFileFromDir(String filename, String dir) throws VcsException {
+        File file = new File(userDir(), filename);
+        try {
+            Files.deleteIfExists(Paths.get(dir, filename + hashSuffix));
+            Files.deleteIfExists(Paths.get(dir, filename));
+        } catch (IOException e) {
+            throw new VcsException(e.getMessage());
+        }
+    }
 }

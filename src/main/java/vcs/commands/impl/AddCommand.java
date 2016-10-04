@@ -1,6 +1,7 @@
 package vcs.commands.impl;
 
 import vcs.commands.Command;
+import vcs.util.VcsException;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +14,7 @@ import static vcs.Main.getRepo;
  */
 
 public class AddCommand implements Command {
-    public void execute(List<String> args) throws IOException {
+    public void execute(List<String> args) throws VcsException {
         for (String arg : args) {
             File f = new File(arg);
             if(!f.isFile() || !f.canRead()) {

@@ -1,6 +1,7 @@
 package vcs.repo;
 
 import vcs.util.Util;
+import vcs.util.VcsException;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -31,12 +32,13 @@ public class Storage implements Serializable {
         return controlledFiles;
     }
 
-    public void addFile(String filename) throws IOException {
+    public void addFile(String filename) throws VcsException {
         Util.copyFileToDir(filename, сurDir);
         controlledFiles.add(filename);
     }
 
-    public boolean resetFile(String filename) {
+    public boolean resetFile(String filename) throws VcsException {
+        Util.removeFileFromDir(filename, сurDir);
         return controlledFiles.remove(filename);
     }
 }
