@@ -1,16 +1,15 @@
 package vcs.util;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.io.FileUtils;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author natalia on 26.09.16.
@@ -40,6 +39,14 @@ public class Util {
         String md5 = DigestUtils.md5Hex(fis);
         fis.close();
         return md5;
+    }
+
+    public static boolean hashEqual(File file1, File file2) throws VcsException {
+        try {
+            return getMD5(file1).equals(getMD5(file2));
+        } catch (IOException e) {
+            throw new VcsException(e.getMessage());
+        }
     }
 
     public static void copyFileToDir(String filename, String dir) throws VcsException {
@@ -76,9 +83,9 @@ public class Util {
         return true;
     }
 
-    public static List<File> listFilesFromDir(String dirname) {
+    public static Set<File> listFilesFromDir(String dirname) {
         File dir = new File(dirname);
-        List<File> files = new ArrayList<File>();
+        Set<File> files = new HashSet<>();
         for (File file : dir.listFiles()) {
             if (file.isDirectory())
                 files.addAll(listFilesFromDir(file.getAbsolutePath()));
@@ -87,4 +94,5 @@ public class Util {
         }
         return files;
     }
+
 }
