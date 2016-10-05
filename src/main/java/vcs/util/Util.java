@@ -7,6 +7,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
@@ -72,5 +74,17 @@ public class Util {
             return false;
         }
         return true;
+    }
+
+    public static List<File> listFilesFromDir(String dirname) {
+        File dir = new File(dirname);
+        List<File> files = new ArrayList<File>();
+        for (File file : dir.listFiles()) {
+            if (file.isDirectory())
+                files.addAll(listFilesFromDir(file.getAbsolutePath()));
+            else
+                files.add(file);
+        }
+        return files;
     }
 }

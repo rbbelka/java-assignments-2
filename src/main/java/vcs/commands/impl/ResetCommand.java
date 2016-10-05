@@ -19,8 +19,8 @@ public class ResetCommand  implements Command {
             if (! Util.checkFile(arg))
                 continue;
 
-            if (getRepo().getStorage().resetFile(arg))
-                System.out.println("Reset " + arg);
+            getRepo().getStorage().resetFile(arg);
+            System.out.println("Reset " + arg);
         }
     }
 }

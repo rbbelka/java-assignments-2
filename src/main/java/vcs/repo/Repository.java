@@ -15,10 +15,6 @@ public class Repository implements Serializable {
         storage = new Storage(dir, tempDir);
     }
 
-    public String getDir() {
-        return storage.getRepoDir();
-    }
-
     public static Repository createRepository(String dir, String tempDir) throws VcsException {
         return new Repository(dir, tempDir);
     }

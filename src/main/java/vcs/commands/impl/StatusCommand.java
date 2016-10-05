@@ -9,6 +9,5 @@ import java.util.List;
  */
 public class StatusCommand implements Command {
     public void execute(List<String> args) {
-
     }
 }

@@ -3,9 +3,12 @@ package vcs.repo;
 import vcs.util.Util;
 import vcs.util.VcsException;
 
-import java.io.IOException;
+import java.io.File;
 import java.io.Serializable;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -18,6 +21,9 @@ public class Storage implements Serializable {
 
     // list of files under control
     private final Set<String> controlledFiles = new HashSet<>();
+    private final Set<String> addedFiles = new HashSet<>();
+    private final Set<String> modifiedFiles = new HashSet<>();
+    private final Set<String> deletedFiles = new HashSet<>();
 
     public Storage(String repoDir, String сurDir) {
         this.repoDir = repoDir;
@@ -28,17 +34,57 @@ public class Storage implements Serializable {
         return repoDir;
     }
 
-    public Set<String> getFiles() {
-        return controlledFiles;
-    }
-
     public void addFile(String filename) throws VcsException {
         Util.copyFileToDir(filename, сurDir);
+        addedFiles.add(filename);
         controlledFiles.add(filename);
     }
 
-    public boolean resetFile(String filename) throws VcsException {
+    public void resetFile(String filename) throws VcsException {
         Util.removeFileFromDir(filename, сurDir);
-        return controlledFiles.remove(filename);
+        addedFiles.remove(filename);
+        controlledFiles.remove(filename);
     }
+
+
+    public Set<String> getControlledFiles() {
+        return controlledFiles;
+    }
+
+    public boolean isControlled(String file) {
+        return controlledFiles.contains(file);
+    }
+
+    public Set<String> getAddedFiles() {
+        return addedFiles;
+    }
+
+    public Set<String> getDeletedFiles() {
+        return deletedFiles;
+    }
+
+    public Set<String> getModifiedFiles() {
+        return modifiedFiles;
+    }
+
+    public List<String> getUntracked() {
+        List<File> allFiles = Util.listFilesFromDir(repoDir);
+        List<String> untracked = new ArrayList<>();
+
+        for (File file : allFiles) {
+            String path = Paths.get(repoDir).relativize(file.toPath()).toString();
+            if (!isControlled(path) && !path.startsWith(".vcs"))
+                untracked.add(path);
+        }
+        return untracked;
+    }
+
+    public List<String> getModifiedNotStaged() {
+        return null;
+    }
+
+    public List<String> getDeletedNotStaged() {
+        return null;
+    }
+
 }
