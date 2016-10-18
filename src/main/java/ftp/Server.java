@@ -1,4 +1,8 @@
 package ftp;
 
-public class Server {
+public interface Server {
+
+    void start();
+
+    void stop();
 }
