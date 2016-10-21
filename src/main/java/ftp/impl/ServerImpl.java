@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ServerImpl implements Server {
+public class ServerImpl implements Server, Runnable {
 
     private final int port;
     private ServerSocket serverSocket;
@@ -115,4 +115,8 @@ public class ServerImpl implements Server {
     }
 
 
+    @Override
+    public void run() {
+        start();
+    }
 }

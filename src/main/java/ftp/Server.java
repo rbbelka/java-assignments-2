@@ -1,6 +1,6 @@
 package ftp;
 
-public interface Server {
+public interface Server extends Runnable {
 
     void start();
 
