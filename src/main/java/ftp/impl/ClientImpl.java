@@ -43,7 +43,7 @@ public class ClientImpl implements Client {
         if (socket == null) {
             connect();
         }
-        output.writeInt(QueryType.GET);
+        output.writeInt(QueryType.GET.ordinal());
         output.writeUTF(path);
         output.flush();
 
@@ -61,7 +61,7 @@ public class ClientImpl implements Client {
         if (socket == null) {
             connect();
         }
-        output.writeInt(QueryType.GET);
+        output.writeInt(QueryType.GET.ordinal());
         output.writeUTF(path);
         output.flush();
 

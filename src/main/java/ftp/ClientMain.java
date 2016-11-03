@@ -2,13 +2,11 @@ package ftp;
 
 import ftp.impl.ClientImpl;
 import ftp.impl.FileItem;
-import org.apache.commons.io.IOUtils;
+import ftp.impl.QueryType;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
@@ -46,18 +44,18 @@ public class ClientMain {
         try (Scanner scanner = new Scanner(System.in)) {
             while (scanner.hasNextLine()) {
                 String command = scanner.next();
-                switch(command) {
-                    case "exit":
+                switch(QueryType.valueOf(command.toUpperCase())) {
+                    case EXIT:
                         client.disconnect();
                         return;
-                    case "list":
+                    case LIST:
                         String dirPath = scanner.next();
                         List<FileItem> files = client.executeList(dirPath);
                         System.out.println("Found " + files.size() + " files");
                         for (FileItem file : files)
                             System.out.print(file.getName() + " " + file.isDirectory());
                         break;
-                    case "get":
+                    case GET:
                         String filePath = scanner.next();
                         String filename = Paths.get(filePath).getFileName().toString();
                         File file = new File(dir, filename);

@@ -18,7 +18,7 @@ public class ServerImpl implements Server, Runnable {
     private final int port;
     private ServerSocket serverSocket;
     private final ExecutorService executorService = Executors.newCachedThreadPool();
-
+    private QueryType[] queryTypes = QueryType.values();
 
     public ServerImpl(int port) {
         this.port = port;
@@ -63,16 +63,17 @@ public class ServerImpl implements Server, Runnable {
                     DataOutputStream output = new DataOutputStream(clientSocket.getOutputStream())) {
                 int queryType = input.readInt();
                 String path = input.readUTF();
-                switch (queryType) {
-                    case QueryType.DISCONNECT:
+                QueryType currentType = queryTypes[queryType];
+                switch (currentType) {
+                    case EXIT:
                         clientSocket.close();
                         break;
 
-                    case QueryType.LIST:
+                    case LIST:
                         listQuery(path, output);
                         break;
 
-                    case QueryType.GET:
+                    case GET:
                         getQuery(path, output);
                         break;
 
