@@ -53,7 +53,7 @@ public class ClientMain {
                         List<FileItem> files = client.executeList(dirPath);
                         System.out.println("Found " + files.size() + " files");
                         for (FileItem file : files)
-                            System.out.print(file.getName() + " " + file.isDirectory());
+                            System.out.println(file.getName() + " " + file.isDirectory());
                         break;
                     case GET:
                         String filePath = scanner.next();

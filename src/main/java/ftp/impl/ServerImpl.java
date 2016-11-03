@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.concurrent.ExecutorService;
@@ -19,6 +20,7 @@ public class ServerImpl implements Server, Runnable {
     private ServerSocket serverSocket;
     private final ExecutorService executorService = Executors.newCachedThreadPool();
     private QueryType[] queryTypes = QueryType.values();
+    private boolean active;
 
     public ServerImpl(int port) {
         this.port = port;
@@ -28,30 +30,37 @@ public class ServerImpl implements Server, Runnable {
     public void start() {
         try {
             serverSocket = new ServerSocket(port);
+            active = true;
         } catch (IOException e) {
             System.out.println("Could not listen on port " + port);
         }
 
         try {
-            while (true) {
+            while (active) {
                 Socket clientSocket = serverSocket.accept();
                 executorService.submit(() -> handleConnection(clientSocket));
             }
+        } catch (SocketException e) {
+            if (active) {
+                System.err.println(e.getMessage());
+            }
         } catch (IOException e) {
-            stop();
+            System.err.println(e.getMessage());
         }
     }
 
     @Override
     public void stop() {
+        if (serverSocket == null) {
+            throw new RuntimeException("server already stopped");
+        }
 
-        if (serverSocket != null) {
-            try {
-                serverSocket.close();
-                executorService.shutdown();
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-            }
+        try {
+            active = false;
+            serverSocket.close();
+            executorService.shutdown();
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
         }
         serverSocket = null;
     }
@@ -62,7 +71,6 @@ public class ServerImpl implements Server, Runnable {
                     DataInputStream input = new DataInputStream(clientSocket.getInputStream());
                     DataOutputStream output = new DataOutputStream(clientSocket.getOutputStream())) {
                 int queryType = input.readInt();
-                String path = input.readUTF();
                 QueryType currentType = queryTypes[queryType];
                 switch (currentType) {
                     case EXIT:
@@ -70,11 +78,11 @@ public class ServerImpl implements Server, Runnable {
                         break;
 
                     case LIST:
-                        listQuery(path, output);
+                        listQuery(input.readUTF(), output);
                         break;
 
                     case GET:
-                        getQuery(path, output);
+                        getQuery(input.readUTF(), output);
                         break;
 
                     default:
@@ -82,7 +90,7 @@ public class ServerImpl implements Server, Runnable {
                 }
 
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println(e.getMessage());
             }
         }
     }
