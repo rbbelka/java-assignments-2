@@ -29,6 +29,12 @@ public class FtpTest {
     private static final String FILE2 = "file2";
     private static final String FILE1NDIR = "fileInDir";
     private static final String RECEIVED = "received";
+    private static final List<FileItem> EXPECTED_LIST = Arrays.asList(
+            new FileItem(FILE1, false)
+            , new FileItem(FILE2, false)
+            , new FileItem(EMPTY, true)
+            , new FileItem(DIR1, true)
+    );
 
 
     @Test
@@ -57,22 +63,15 @@ public class FtpTest {
         Thread tserver = new Thread(server);
         tserver.start();
 
-        List<FileItem> expected = Arrays.asList(
-                new FileItem(FILE1, false)
-                , new FileItem(FILE2, false)
-                , new FileItem(EMPTY, true)
-                , new FileItem(DIR1, true)
-        );
-
         try {
             Client client = new ClientImpl(HOST, PORT + 1);
             client.connect();
 
             List<FileItem> list = client.executeList(RESOURCES + TEST_DIR);
-            assertEquals("list sizes doesn't match", expected.size(), list.size());
+            assertEquals("list sizes doesn't match", EXPECTED_LIST.size(), list.size());
             assertTrue("file lists are different",
                     Arrays.deepEquals(
-                        expected.stream().sorted().toArray(),
+                        EXPECTED_LIST.stream().sorted().toArray(),
                         list.stream().sorted().toArray()));
 
             client.disconnect();
@@ -108,6 +107,40 @@ public class FtpTest {
             throw new RuntimeException(e);
         }
 
+        server.stop();
+    }
+
+
+    @Test
+    public void testSeveralClients() throws IOException, InterruptedException {
+        Server server = new ServerImpl(PORT + 3);
+        Thread tserver = new Thread(server);
+        tserver.start();
+
+        final File expected = new File(RESOURCES + TEST_DIR + FILE1);
+
+        int clientsQuantity = 10;
+        for (int i = 0; i < clientsQuantity; i++) {
+            Thread thread = new Thread(() -> {
+                try {
+                    Client client = new ClientImpl(HOST, PORT + 3);
+                    client.connect();
+
+                    List<FileItem> list = client.executeList(RESOURCES + TEST_DIR);
+                    assertEquals("list sizes doesn't match", EXPECTED_LIST.size(), list.size());
+                    assertTrue("file lists are different",
+                            Arrays.deepEquals(
+                                    EXPECTED_LIST.stream().sorted().toArray(),
+                                    list.stream().sorted().toArray()));
+
+                    client.disconnect();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            thread.start();
+            thread.join();
+        }
         server.stop();
     }
 
