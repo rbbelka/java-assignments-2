@@ -144,4 +144,27 @@ public class FtpTest {
         server.stop();
     }
 
+
+    @Test
+    public void testListTwoTimes() throws IOException, InterruptedException {
+        Server server = new ServerImpl(PORT + 1);
+        Thread tserver = new Thread(server);
+        tserver.start();
+
+        try {
+            Client client = new ClientImpl(HOST, PORT + 1);
+            client.connect();
+
+            List<FileItem> list = client.executeList(RESOURCES + TEST_DIR);
+
+            List<FileItem> list2 = client.executeList(RESOURCES + TEST_DIR);
+
+            client.disconnect();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        server.stop();
+    }
+
 }

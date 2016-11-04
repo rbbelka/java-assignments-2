@@ -35,17 +35,18 @@ public class ServerImpl implements Server, Runnable {
             System.out.println("Could not listen on port " + port);
         }
 
-        try {
-            while (active) {
+
+        while (active) {
+            try {
                 Socket clientSocket = serverSocket.accept();
                 executorService.submit(() -> handleConnection(clientSocket));
-            }
-        } catch (SocketException e) {
-            if (active) {
+            } catch (SocketException e) {
+                if (active) {
+                    System.err.println(e.getMessage());
+                }
+            } catch (IOException e) {
                 System.err.println(e.getMessage());
             }
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
         }
     }
 
@@ -66,31 +67,42 @@ public class ServerImpl implements Server, Runnable {
     }
 
     private void handleConnection(Socket clientSocket) {
-        while (!clientSocket.isClosed()) {
-            try (
-                    DataInputStream input = new DataInputStream(clientSocket.getInputStream());
-                    DataOutputStream output = new DataOutputStream(clientSocket.getOutputStream())) {
-                int queryType = input.readInt();
-                QueryType currentType = queryTypes[queryType];
-                switch (currentType) {
-                    case EXIT:
-                        clientSocket.close();
-                        break;
+        try {
+            DataInputStream input = new DataInputStream(clientSocket.getInputStream());
+            DataOutputStream output = new DataOutputStream(clientSocket.getOutputStream());
+            while (!clientSocket.isClosed()) {
+                try {
+                    int queryType = input.readInt();
+                    QueryType currentType = queryTypes[queryType];
+                    switch (currentType) {
+                        case EXIT:
+                            clientSocket.close();
+                            break;
 
-                    case LIST:
-                        listQuery(input.readUTF(), output);
-                        break;
+                        case LIST:
+                            listQuery(input.readUTF(), output);
+                            break;
 
-                    case GET:
-                        getQuery(input.readUTF(), output);
-                        break;
+                        case GET:
+                            getQuery(input.readUTF(), output);
+                            break;
 
-                    default:
-                        throw new RuntimeException("Wrong query type: " + queryType);
+                        default:
+                            throw new RuntimeException("Wrong query type: " + queryType);
+                    }
+                } catch (IOException e) {
+                    output.writeInt(0);
+                    output.flush();
+                    throw e;
                 }
 
-            } catch (IOException e) {
-                System.err.println(e.getMessage());
+            }
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                clientSocket.close();
+            } catch (IOException ignored) {
             }
         }
     }
@@ -122,7 +134,6 @@ public class ServerImpl implements Server, Runnable {
         }
         output.flush();
     }
-
 
     @Override
     public void run() {
