@@ -50,8 +50,7 @@ public class ClientImpl implements Client {
             throw new RuntimeException("not connected");
         }
         socket.close();
-        input.close();
-        output.close();
+        System.out.println("Client disconnected");
     }
 
     @Override

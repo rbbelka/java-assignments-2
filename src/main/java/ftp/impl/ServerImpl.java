@@ -2,10 +2,7 @@ package ftp.impl;
 
 import ftp.Server;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -34,7 +31,6 @@ public class ServerImpl implements Server, Runnable {
         } catch (IOException e) {
             System.out.println("Could not listen on port " + port);
         }
-
 
         while (active) {
             try {
@@ -70,8 +66,7 @@ public class ServerImpl implements Server, Runnable {
         try {
             DataInputStream input = new DataInputStream(clientSocket.getInputStream());
             DataOutputStream output = new DataOutputStream(clientSocket.getOutputStream());
-            while (!clientSocket.isClosed()) {
-                try {
+            while (!clientSocket.isClosed() && clientSocket.isConnected()) {
                     int queryType = input.readInt();
                     QueryType currentType = queryTypes[queryType];
                     switch (currentType) {
@@ -90,13 +85,9 @@ public class ServerImpl implements Server, Runnable {
                         default:
                             throw new RuntimeException("Wrong query type: " + queryType);
                     }
-                } catch (IOException e) {
-                    output.writeInt(0);
-                    output.flush();
-                    throw e;
-                }
-
             }
+        }  catch (EOFException ignored) {
+            // client disconnected
         } catch (IOException e) {
             System.err.println(e.getMessage());
         } finally {
