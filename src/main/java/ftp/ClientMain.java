@@ -6,6 +6,7 @@ import ftp.impl.QueryType;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -17,7 +18,8 @@ import java.util.Scanner;
 
 public class ClientMain {
 
-    private static final String dir = "test/resources/downloads";
+//    private static final String dir = "src/test/resources/downloads";
+    private static final String dir = ".";
 
     public static void main(String[] args) {
         if (args.length < 2) {
@@ -59,8 +61,12 @@ public class ClientMain {
                         String filePath = scanner.next();
                         String filename = Paths.get(filePath).getFileName().toString();
                         File file = new File(dir, filename);
-                        Files.copy(client.executeGet(filePath), file.toPath());
-                        System.out.println("Downloaded " + filePath);
+                        try {
+                            Files.copy(client.executeGet(filePath), file.toPath());
+                            System.out.println("Downloaded " + filePath);
+                        } catch (FileAlreadyExistsException e) {
+                            System.out.println("File " + filePath + " already exists");
+                        }
                         break;
                     default:
                         System.out.println("Usage:");
