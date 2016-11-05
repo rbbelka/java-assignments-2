@@ -23,7 +23,7 @@ public class FtpTest {
     private static final String HOST = "localhost";
     private static final String RESOURCES = "src/test/resources/";
     private static final String TEST_DIR = "test/";
-    private static final String EMPTY = "empty";
+    private static final String EMPTY = "dir1/empty";
     private static final String DIR1 = "dir1";
     private static final String FILE1 = "file1";
     private static final String FILE2 = "file2";
@@ -32,7 +32,6 @@ public class FtpTest {
     private static final List<FileItem> EXPECTED_LIST = Arrays.asList(
             new FileItem(FILE1, false)
             , new FileItem(FILE2, false)
-            , new FileItem(EMPTY, true)
             , new FileItem(DIR1, true)
     );
 
