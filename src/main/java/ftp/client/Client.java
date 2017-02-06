@@ -1,6 +1,6 @@
-package ftp;
+package ftp.client;
 
-import ftp.impl.FileItem;
+import ftp.util.FileItem;
 
 import java.io.IOException;
 import java.io.InputStream;

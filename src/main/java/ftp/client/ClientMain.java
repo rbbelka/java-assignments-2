@@ -1,8 +1,7 @@
-package ftp;
+package ftp.client;
 
-import ftp.impl.ClientImpl;
-import ftp.impl.FileItem;
-import ftp.impl.QueryType;
+import ftp.util.FileItem;
+import ftp.util.QueryType;
 
 import java.io.File;
 import java.io.IOException;

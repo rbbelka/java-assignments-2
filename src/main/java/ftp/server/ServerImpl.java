@@ -1,6 +1,6 @@
-package ftp.impl;
+package ftp.server;
 
-import ftp.Server;
+import ftp.util.QueryType;
 
 import java.io.*;
 import java.net.ServerSocket;

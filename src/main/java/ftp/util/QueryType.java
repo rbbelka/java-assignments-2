@@ -1,4 +1,4 @@
-package ftp.impl;
+package ftp.util;
 
 /**
  * Types of queries from client to server

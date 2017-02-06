@@ -1,6 +1,7 @@
-package ftp.impl;
+package ftp.client;
 
-import ftp.Client;
+import ftp.util.FileItem;
+import ftp.util.QueryType;
 import org.apache.commons.io.input.BoundedInputStream;
 
 import java.io.*;

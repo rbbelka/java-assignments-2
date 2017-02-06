@@ -1,6 +1,4 @@
-package ftp;
-
-import ftp.impl.ServerImpl;
+package ftp.server;
 
 /**
  * Main class to run server

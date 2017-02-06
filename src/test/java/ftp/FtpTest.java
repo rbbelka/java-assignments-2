@@ -1,8 +1,10 @@
 package ftp;
 
-import ftp.impl.ClientImpl;
-import ftp.impl.FileItem;
-import ftp.impl.ServerImpl;
+import ftp.client.Client;
+import ftp.client.ClientImpl;
+import ftp.util.FileItem;
+import ftp.server.ServerImpl;
+import ftp.server.Server;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 

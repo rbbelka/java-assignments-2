@@ -1,4 +1,4 @@
-package ftp;
+package ftp.server;
 
 public interface Server extends Runnable {
 

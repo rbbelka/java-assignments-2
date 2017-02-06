@@ -1,4 +1,4 @@
-package ftp.impl;
+package ftp.util;
 
 /**
  * Dataclass for list query
