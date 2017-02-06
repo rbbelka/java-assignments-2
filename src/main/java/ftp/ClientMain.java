@@ -6,6 +6,7 @@ import ftp.impl.QueryType;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -63,8 +64,13 @@ public class ClientMain {
                             String filename = Paths.get(filePath).getFileName().toString();
                             File file = new File(dir, filename);
                             try {
-                                Files.copy(client.executeGet(filePath), file.toPath());
-                                System.out.println("Downloaded " + filePath);
+                                InputStream result = client.executeGet(filePath);
+                                if (result.available() > 0) {
+                                    Files.copy(result, file.toPath());
+                                    System.out.println("Downloaded " + filePath);
+                                } else {
+                                    System.out.println("File " + filePath + " doesn't exist");
+                                }
                             } catch (FileAlreadyExistsException e) {
                                 System.out.println("File " + filePath + " already exists");
                             }
