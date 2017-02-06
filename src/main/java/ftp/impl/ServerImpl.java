@@ -28,6 +28,7 @@ public class ServerImpl implements Server, Runnable {
         try {
             serverSocket = new ServerSocket(port);
             active = true;
+            System.out.println("Server started to listen on port " + port);
         } catch (IOException e) {
             System.out.println("Could not listen on port " + port);
         }

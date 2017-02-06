@@ -46,37 +46,45 @@ public class ClientMain {
         try (Scanner scanner = new Scanner(System.in)) {
             while (scanner.hasNextLine()) {
                 String command = scanner.next();
-                switch(QueryType.valueOf(command.toUpperCase())) {
-                    case EXIT:
-                        client.disconnect();
-                        return;
-                    case LIST:
-                        String dirPath = scanner.next();
-                        List<FileItem> files = client.executeList(dirPath);
-                        System.out.println("Found " + files.size() + " files");
-                        for (FileItem file : files)
-                            System.out.println(file.getName() + " " + file.isDirectory());
-                        break;
-                    case GET:
-                        String filePath = scanner.next();
-                        String filename = Paths.get(filePath).getFileName().toString();
-                        File file = new File(dir, filename);
-                        try {
-                            Files.copy(client.executeGet(filePath), file.toPath());
-                            System.out.println("Downloaded " + filePath);
-                        } catch (FileAlreadyExistsException e) {
-                            System.out.println("File " + filePath + " already exists");
-                        }
-                        break;
-                    default:
-                        System.out.println("Usage:");
-                        System.out.println("list <path>");
-                        System.out.println("get <path>");
+                try {
+                    switch (QueryType.valueOf(command.toUpperCase())) {
+                        case EXIT:
+                            client.disconnect();
+                            return;
+                        case LIST:
+                            String dirPath = scanner.next();
+                            List<FileItem> files = client.executeList(dirPath);
+                            System.out.println("Found " + files.size() + " files");
+                            for (FileItem file : files)
+                                System.out.println(file.getName() + " " + file.isDirectory());
+                            break;
+                        case GET:
+                            String filePath = scanner.next();
+                            String filename = Paths.get(filePath).getFileName().toString();
+                            File file = new File(dir, filename);
+                            try {
+                                Files.copy(client.executeGet(filePath), file.toPath());
+                                System.out.println("Downloaded " + filePath);
+                            } catch (FileAlreadyExistsException e) {
+                                System.out.println("File " + filePath + " already exists");
+                            }
+                            break;
+                        default:
+                            usage();
+                    }
+                } catch (IllegalArgumentException e) {
+                    usage();
                 }
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    private static void usage() {
+        System.out.println("Usage:");
+        System.out.println("list <path>");
+        System.out.println("get <path>");
     }
 
 }
