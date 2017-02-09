@@ -1,5 +1,8 @@
 package torrent.impl;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 /**
  * Types of queries from client to server
  */
@@ -13,8 +16,9 @@ public class Constants {
     public static final long UPDATE_TIMEOUT = 60 * 1000;
     public static final int BLOCK_SIZE = 10 * 1024 * 1024;
 
-    public static final String SERVER_SAVE = ".torrentServerSave";
-    public static final String CLIENT_SAVE = ".torrentClientSave";
+    public static final Path SERVER_SAVE = Paths.get(".torrentServerSave");
+    public static final Path CLIENT_SAVE = Paths.get(".torrentClientSave");
+
     public static final String DOWNLOAD_DIR = "downloads";
 
     public enum ServerQueryType {
