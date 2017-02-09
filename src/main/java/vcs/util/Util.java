@@ -34,22 +34,22 @@ public class Util {
         return vcsDir() + "/current";
     }
 
-    private static String getMD5(File file) throws IOException {
-        FileInputStream fis = new FileInputStream(file);
-        String md5 = DigestUtils.md5Hex(fis);
-        fis.close();
-        return md5;
-    }
+    public static String storageDir() {return vcsDir() + "/storage";}
 
-    public static boolean hashEqual(File file1, File file2) throws VcsException {
-        try {
-            return getMD5(file1).equals(getMD5(file2));
+    public static String getMD5(File file) throws VcsException {
+        try (FileInputStream fis = new FileInputStream(file)) {
+            return DigestUtils.md5Hex(fis);
         } catch (IOException e) {
             throw new VcsException(e.getMessage());
         }
     }
 
-    public static void copyFileToDir(String filename, String dir) throws VcsException {
+    public static boolean hashEqual(File file1, File file2) throws VcsException {
+        return getMD5(file1).equals(getMD5(file2));
+    }
+
+    public static void copyFileAndHashToCurrentDir(String filename) throws VcsException {
+        String dir = curDir();
         File file = new File(userDir(), filename);
         if (file.exists()) {
             try {
@@ -64,7 +64,8 @@ public class Util {
         }
     }
 
-    public static void removeFileFromDir(String filename, String dir) throws VcsException {
+    public static void removeFileAndHashFromCurrentDir(String filename) throws VcsException {
+        String dir = curDir();
         File file = new File(userDir(), filename);
         try {
             Files.deleteIfExists(Paths.get(dir, filename + hashSuffix));

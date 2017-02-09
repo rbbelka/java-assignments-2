@@ -1,6 +1,8 @@
 package vcs.repo;
 
-public class Revision {
+import java.io.Serializable;
+
+public class Revision implements Serializable {
     private final int id;
     private final int previous;
     private final String commitMessage;

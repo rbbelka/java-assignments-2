@@ -10,5 +10,5 @@ import java.util.List;
  */
 
 public interface Command {
-    void execute(List<String> args) throws VcsException;
+    void execute(List<String> args) throws VcsException, IOException;
 }
