@@ -15,6 +15,5 @@ public class CheckoutCommand implements Command {
     public void execute(List<String> args) throws VcsException, IOException {
         final String id = args.get(0);
         getRepo().checkout(id);
-        System.out.println("Checked out " + id);
     }
 }
