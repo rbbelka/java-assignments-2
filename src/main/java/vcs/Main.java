@@ -16,8 +16,9 @@ import static vcs.util.Util.getInitFile;
 public class Main {
 
     private static Repository repo;
+    private static final String initFile = getInitFile();
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException, VcsException {
+    public static void main(String[] args) {
 
         if (args.length < 1) {
             inputError();
@@ -31,17 +32,26 @@ public class Main {
             return;
         }
 
+        try {
         if (checkInit()) {
-            repo = Serializer.deserialize(getInitFile());
+                repo = Serializer.deserialize(initFile);
         } else if (!commandName.equals("init")) {
             initError();
             return;
         }
 
         List<String> cmdArgs = Arrays.asList(args).subList(1, args.length);
-        command.execute(cmdArgs);
+        try {
+            command.execute(cmdArgs);
+        } catch (VcsException e) {
+            System.out.println(e.getMessage());
+        }
 
-        Serializer.serialize(repo, getInitFile());
+        Serializer.serialize(repo, initFile);
+
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public static Repository getRepo() {
