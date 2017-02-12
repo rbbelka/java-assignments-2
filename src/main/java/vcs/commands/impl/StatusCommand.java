@@ -12,6 +12,10 @@ import static vcs.Main.getRepo;
  */
 public class StatusCommand implements Command {
     public void execute(List<String> args) throws VcsException {
+        if (args.size() > 0) {
+            System.out.println("Command does not accept any arguments");
+            return;
+        }
 
         List<String> untracked = getRepo().getStorage().getUntracked();
         List<String> modified = getRepo().getStorage().getModifiedNotStaged();

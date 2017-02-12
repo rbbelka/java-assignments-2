@@ -17,8 +17,11 @@ import static vcs.util.Util.userDir;
 public class CleanCommand implements Command {
     @Override
     public void execute(List<String> args) throws VcsException {
+        if (args.size() > 0) {
+            System.out.println("Command does not accept any arguments");
+            return;
+        }
         List<String> untracked = getRepo().getStorage().getUntracked();
-
         try {
         for (String path : untracked)
                 Files.deleteIfExists(Paths.get(userDir(), path));

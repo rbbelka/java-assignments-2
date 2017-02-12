@@ -18,6 +18,10 @@ import static vcs.util.Util.*;
 public class InitCommand implements Command {
 
     public void execute(List<String> args) throws VcsException {
+        if (args.size() > 0) {
+            System.out.println("Command does not accept any arguments");
+            return;
+        }
 
         File vcsDir = new File(vcsDir());
         File curDir = new File(curDir());

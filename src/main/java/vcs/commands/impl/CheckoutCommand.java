@@ -14,14 +14,14 @@ import static vcs.Main.getRepo;
 public class CheckoutCommand implements Command {
     public void execute(List<String> args) throws VcsException, IOException {
         if (args.size() == 0) {
-            System.out.println("Need to specify branch or revision");
+            System.out.println("Branch or revision is not specified");
             return;
         }
         if (args.get(0).equals("-r")) {
             if (args.size() > 1) {
                 getRepo().checkoutRevision(args.get(1));
             } else {
-                System.out.println("Need to specify revision");
+                System.out.println("Revision is not specified");
             }
             return;
         }

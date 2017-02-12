@@ -21,6 +21,10 @@ public class RmCommand implements Command {
 
     @Override
     public void execute(List<String> args) throws VcsException {
+        if (args.size() == 0) {
+            System.out.println("Files to delete are not specified");
+            return;
+        }
         for (String arg : args) {
             if (! Util.checkFile(arg))
                 continue;

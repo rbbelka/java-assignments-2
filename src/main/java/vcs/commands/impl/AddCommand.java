@@ -16,8 +16,12 @@ import static vcs.Main.getRepo;
 
 public class AddCommand implements Command {
     public void execute(List<String> args) throws VcsException {
+        if (args.size() == 0) {
+            System.out.println("Files to add are not specified");
+            return;
+        }
         for (String arg : args) {
-            if (! Util.checkFile(arg))
+            if (!Util.checkFile(arg))
                 continue;
 
             getRepo().getStorage().addFile(arg);

@@ -9,6 +9,9 @@ import java.util.List;
  */
 public class LogCommand implements Command {
     public void execute(List<String> args) {
-
+        if (args.size() > 0) {
+            System.out.println("Command does not accept any arguments");
+            return;
+        }
     }
 }

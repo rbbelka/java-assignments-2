@@ -15,8 +15,11 @@ import static vcs.Main.getRepo;
 public class CommitCommand implements Command {
 
     public void execute(List<String> args) throws VcsException, IOException {
+        if (args.size() == 0) {
+            System.out.println("Commit message is not entered");
+            return;
+        }
         String message = args.stream().collect(Collectors.joining(" "));
         getRepo().commit(message);
-        //  TODO deal with added, modified, deleted files
     }
 }
