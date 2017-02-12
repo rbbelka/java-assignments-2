@@ -14,8 +14,8 @@ public class Repository implements Serializable {
     private static final String DEFAULT_BRANCH = "master";
     private Storage storage;
 
-    private int currentRevision;
-    private int nextRevisionNumber;
+    private int currentRevision = 0;
+    private int nextRevisionNumber = 1;
     private final Map<Integer, Revision> revisions;
     private Branch currentBranch;
     private final Map<String, Branch> branches;
@@ -38,6 +38,14 @@ public class Repository implements Serializable {
 
     public String getCurrentBranchName() {
         return currentBranch.getName();
+    }
+
+    public Revision getCurrentRevision() {
+        return getRevisionbyId(currentRevision);
+    }
+
+    public Revision getRevisionbyId(int previous) {
+        return revisions.get(previous);
     }
 
     public void commit(String message) throws VcsException, IOException {
