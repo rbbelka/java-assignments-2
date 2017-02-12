@@ -21,7 +21,7 @@ public class BranchCommand implements Command {
             if (args.size() > 1) {
                 getRepo().deleteBranch(args.get(1));
             } else {
-                throw new VcsException("Not specified branch name");
+                System.out.println("Need to specify branch");
             }
             return;
         }

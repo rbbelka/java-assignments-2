@@ -59,24 +59,31 @@ public class Repository implements Serializable {
         return id;
     }
 
-    public void checkout(String name) throws VcsException, IOException {
+    public void checkoutBranch(String name) throws VcsException, IOException {
         Branch branch = branches.get(name);
-        if (branch != null) {
-            currentBranch = branch;
-            currentRevision = branch.getRevision();
-            System.out.println("Checked out branch " + currentBranch.getName());
-        } else {
-            try {
-                Revision revision = revisions.get(Integer.parseInt(name));
-                branch = branches.get(revision.getBranchName());
-                currentRevision = revision.getId();
-                currentBranch = branch;
-                System.out.println("Checked out revision" + revision);
-            } catch (Exception e) {
-                throw new VcsException("Checkout failed: branch or revision not found");
-            }
+        if (branch == null) {
+            throw new VcsException("Checkout failed: branch not found");
         }
+        currentBranch = branch;
+        currentRevision = branch.getRevision();
         storage.checkoutRevision(currentRevision);
+        System.out.println("Checked out branch " + currentBranch.getName());
+    }
+
+    public void checkoutRevision(String id) throws VcsException, IOException {
+        try {
+            Revision revision = revisions.get(Integer.parseInt(id));
+            Branch branch = branches.get(revision.getBranchName());
+            if (branch == null) {
+                throw new VcsException();
+            }
+            currentRevision = revision.getId();
+            currentBranch = branch;
+            System.out.println("Checked out revision " + revision.getId());
+            storage.checkoutRevision(currentRevision);
+        } catch (Exception e) {
+            throw new VcsException("Checkout failed: revision not found");
+        }
     }
 
     public void createBranch(String name) throws VcsException {
