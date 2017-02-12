@@ -41,10 +41,10 @@ public class Repository implements Serializable {
     }
 
     public Revision getCurrentRevision() {
-        return getRevisionbyId(currentRevision);
+        return getRevisionById(currentRevision);
     }
 
-    public Revision getRevisionbyId(int previous) {
+    public Revision getRevisionById(int previous) {
         return revisions.get(previous);
     }
 
@@ -95,8 +95,8 @@ public class Repository implements Serializable {
     }
 
     public void createBranch(String name) throws VcsException {
-        Branch branch = new Branch(name, currentRevision);
         if (branches.get(name) == null) {
+            Branch branch = new Branch(name, currentRevision);
             branches.put(name, branch);
             System.out.println("Branch " + name + " created");
         } else {
@@ -114,4 +114,34 @@ public class Repository implements Serializable {
         System.out.println("Branch " + name + " deleted");
     }
 
+    public void merge(String branchToMerge, String message) throws VcsException, IOException {
+        Branch branch = branches.get(branchToMerge);
+        if (branch == null) {
+            throw new VcsException("Branch not found");
+        }
+        int fromId = branch.getRevision();
+        int baseId = findLCA(fromId, currentBranch.getRevision());
+        if (fromId <= baseId) {
+            System.out.println("Nothing to merge: branch is up-to-date");
+            return;
+        }
+        storage.merge(fromId, currentRevision, baseId, nextRevisionNumber);
+        String mergeMessage = "Merged branch " + branch.getName() + " into " + currentBranch.getName();
+        System.out.println(mergeMessage);
+        addRevision(mergeMessage + message);
+        storage.checkoutRevision(currentRevision);
+    }
+
+    private int findLCA(int fromId, int toId) {
+        Revision from = getRevisionById(fromId);
+        Revision to = getRevisionById(toId);
+        while (from.getId() != to.getId()) {
+            if (from.getId() > to.getId()) {
+                from = getRevisionById(from.getPrevious());
+            } else {
+                to = getRevisionById(to.getPrevious());
+            }
+        }
+        return from.getId();
+    }
 }

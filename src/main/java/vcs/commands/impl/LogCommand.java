@@ -27,7 +27,7 @@ public class LogCommand implements Command {
         System.out.println("Current branch: " + branchName);
         while (revision != null) {
             System.out.println(revision.getId() + ": " + revision.getCommitMessage());
-            revision = repo.getRevisionbyId(revision.getPrevious());
+            revision = repo.getRevisionById(revision.getPrevious());
         }
     }
 }

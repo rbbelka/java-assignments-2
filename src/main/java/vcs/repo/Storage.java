@@ -135,7 +135,7 @@ public class Storage implements Serializable {
             FileUtils.deleteQuietly(new File(repoDir, file));
         }
         FileUtils.cleanDirectory(new File(curDir));
-        Snapshot snapshot = snapshots.get(revision);
+        Snapshot snapshot = getSnapshot(revision);
         controlledFiles.clear();
         controlledFiles.addAll(snapshot.keySet());
         for (String file : controlledFiles) {
@@ -144,4 +144,43 @@ public class Storage implements Serializable {
             FileUtils.copyFile(new File(storageDir, hash), new File(curDir, file));
         }
     }
+
+    private Snapshot getSnapshot(int revision) {
+        return snapshots.get(revision);
+    }
+
+    public void merge(int fromRevision, int toRevision, int baseRevision, int nextRevision) throws VcsException {
+        Snapshot from = getSnapshot(fromRevision);
+        Snapshot to = getSnapshot(toRevision);
+        Snapshot base = getSnapshot(baseRevision);
+
+        Set<String> allFiles = new HashSet<>();
+        allFiles.addAll(from.keySet());
+        allFiles.addAll(to.keySet());
+        allFiles.addAll(base.keySet());
+
+        Snapshot result = new Snapshot();
+        for (String file : allFiles) {
+            final String fromHash = from.get(file);
+            final String toHash = to.get(file);
+            final String baseHash = base.get(file);
+
+            boolean changedFrom = !Objects.equals(fromHash, baseHash);
+            boolean changedTo = !Objects.equals(toHash, baseHash);
+            boolean changeDiffers = !Objects.equals(fromHash, toHash);
+
+            if (changedFrom && changedTo && changeDiffers) {
+                throw new VcsException("Merge conflict: file " + file + " differs");
+            }
+            if (changedFrom) {
+                if (from.contains(file)) {
+                    result.addFile(file, fromHash);
+                }
+            } else if (to.contains(file)) {
+                result.addFile(file, toHash);
+            }
+        }
+        snapshots.put(nextRevision, result);
+    }
+
 }

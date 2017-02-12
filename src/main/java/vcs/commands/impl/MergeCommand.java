@@ -1,14 +1,27 @@
 package vcs.commands.impl;
 
 import vcs.commands.Command;
+import vcs.util.VcsException;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static vcs.Main.getRepo;
 
 /**
  * @author natalia on 25.09.16.
  */
 public class MergeCommand implements Command {
-    public void execute(List<String> args) {
-
+    public void execute(List<String> args) throws VcsException, IOException {
+        if (args.size() == 0) {
+            System.out.println("Branch to merge is not specified");
+            return;
+        }
+        String message = "";
+        if (args.size() > 1) {
+            message = args.stream().skip(1).collect(Collectors.joining(" "));
+        }
+        getRepo().merge(args.get(0), message);
     }
 }
