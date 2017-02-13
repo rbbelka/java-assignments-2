@@ -20,28 +20,12 @@ public class InitCommand implements Command {
             throw new WrongNumberOfArgumentsException("Command does not accept any arguments");
         }
 
-        File vcsDir = new File(repo.getVcsDir());
-        File curDir = new File(repo.getStorage().getCurDir());
-        File init = new File(repo.getInitFile());
-
         if (repo.checkInit()) {
             System.out.println("Repository has been already inited");
             return;
         }
 
-        if (!vcsDir.mkdirs()) {
-            throw new IOException("Can't create vcs folder");
-        }
-
-        if (!curDir.mkdirs()) {
-            vcsDir.delete();
-            throw new IOException("Can't create temp folder");
-        }
-
-        if (!init.createNewFile()) {
-            vcsDir.delete();
-            throw new IOException("Can't create init file");
-        }
+        repo.createFileStructure();
 
         System.out.println("Succesful init");
 

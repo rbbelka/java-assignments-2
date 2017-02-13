@@ -14,7 +14,7 @@ import java.util.*;
  */
 public class Repository implements Serializable {
 
-    private static final String DEFAULT_BRANCH = "master";
+    public static final String DEFAULT_BRANCH = "master";
     private Storage storage;
 
     private int currentRevision = 0;
@@ -47,6 +47,10 @@ public class Repository implements Serializable {
         return storage;
     }
 
+    public Map<String, Branch> getBranches() {
+        return branches;
+    }
+
     public String getCurrentBranchName() {
         return currentBranch.getName();
     }
@@ -65,8 +69,8 @@ public class Repository implements Serializable {
 
     public void commit(String message) throws IOException {
         int id = addRevision(message);
-        System.out.println("Committed revision " + id + " to branch " + currentBranch.getName());
         storage.writeRevision(id);
+        System.out.println("Committed revision " + id + " to branch " + currentBranch.getName());
     }
 
     private int addRevision(String message) {
@@ -156,4 +160,23 @@ public class Repository implements Serializable {
         return from.getId();
     }
 
+    public void createFileStructure() throws IOException {
+        File vcsDir = new File(getVcsDir());
+        File curDir = new File(getStorage().getCurDir());
+        File init = new File(getInitFile());
+
+        if (!vcsDir.mkdirs()) {
+            throw new IOException("Can't create vcs folder");
+        }
+
+        if (!curDir.mkdirs()) {
+            vcsDir.delete();
+            throw new IOException("Can't create temp folder");
+        }
+
+        if (!init.createNewFile()) {
+            vcsDir.delete();
+            throw new IOException("Can't create init file");
+        }
+    }
 }
