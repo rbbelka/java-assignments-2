@@ -1,8 +1,9 @@
 package vcs.repo;
 
 import org.apache.commons.io.FileUtils;
+import vcs.exceptions.MergeConflictException;
 import vcs.util.Util;
-import vcs.util.VcsException;
+import vcs.exceptions.VcsException;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,13 +38,13 @@ public class Storage implements Serializable {
         return repoDir;
     }
 
-    public void addFile(String filename) throws VcsException {
+    public void addFile(String filename) throws IOException {
         Util.copyFileAndHashToCurrentDir(filename);
         addedFiles.add(filename);
         controlledFiles.add(filename);
     }
 
-    public void resetFile(String filename) throws VcsException {
+    public void resetFile(String filename) throws IOException {
         Util.removeFileAndHashFromCurrentDir(filename);
         addedFiles.remove(filename);
         controlledFiles.remove(filename);
@@ -83,7 +84,7 @@ public class Storage implements Serializable {
         return untracked;
     }
 
-    public List<String> getModifiedNotStaged() throws VcsException {
+    public List<String> getModifiedNotStaged() throws IOException {
 
         List<String> modified = new ArrayList<>();
         Set<File> allFiles = Util.listFilesFromDir(repoDir);
@@ -96,7 +97,7 @@ public class Storage implements Serializable {
         return modified;
     }
 
-    public List<String> getDeletedNotStaged() throws VcsException {
+    public List<String> getDeletedNotStaged() {
         List<String> deleted = new ArrayList<>();
         Set<String> allFiles =
                 Util.listFilesFromDir(repoDir).stream()
@@ -112,7 +113,7 @@ public class Storage implements Serializable {
         return deleted;
     }
 
-    public void writeRevision(int revision) throws VcsException, IOException {
+    public void writeRevision(int revision) throws IOException {
         Snapshot snapshot = new Snapshot();
         final String storageDir = Util.storageDir();
         for (String filePath : controlledFiles) {
@@ -149,7 +150,7 @@ public class Storage implements Serializable {
         return snapshots.get(revision);
     }
 
-    public void merge(int fromRevision, int toRevision, int baseRevision, int nextRevision) throws VcsException {
+    public void merge(int fromRevision, int toRevision, int baseRevision, int nextRevision) throws MergeConflictException {
         Snapshot from = getSnapshot(fromRevision);
         Snapshot to = getSnapshot(toRevision);
         Snapshot base = getSnapshot(baseRevision);
@@ -170,7 +171,7 @@ public class Storage implements Serializable {
             boolean changeDiffers = !Objects.equals(fromHash, toHash);
 
             if (changedFrom && changedTo && changeDiffers) {
-                throw new VcsException("Merge conflict: file " + file + " differs");
+                throw new MergeConflictException("Merge conflict: file " + file + " differs");
             }
             if (changedFrom) {
                 if (from.contains(file)) {

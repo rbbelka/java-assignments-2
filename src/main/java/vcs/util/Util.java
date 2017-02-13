@@ -34,50 +34,42 @@ public class Util {
         return vcsDir() + "/current";
     }
 
-    public static String storageDir() {return vcsDir() + "/storage";}
+    public static String storageDir() {
+        return vcsDir() + "/storage";
+    }
 
-    public static String getMD5(File file) throws VcsException {
+    public static String getMD5(File file) throws IOException {
         try (FileInputStream fis = new FileInputStream(file)) {
             return DigestUtils.md5Hex(fis);
-        } catch (IOException e) {
-            throw new VcsException(e.getMessage());
         }
     }
 
-    public static boolean hashEqual(File file1, File file2) throws VcsException {
+    public static boolean hashEqual(File file1, File file2) throws IOException {
         return getMD5(file1).equals(getMD5(file2));
     }
 
-    public static void copyFileAndHashToCurrentDir(String filename) throws VcsException {
+    public static void copyFileAndHashToCurrentDir(String filename) throws IOException {
         String dir = curDir();
         File file = new File(userDir(), filename);
         if (file.exists()) {
-            try {
-                File hashFile = new File(dir, filename + hashSuffix);
-                FileUtils.writeStringToFile(hashFile, getMD5(file));
+            File hashFile = new File(dir, filename + hashSuffix);
+            FileUtils.writeStringToFile(hashFile, getMD5(file));
 
-                File newFile = new File(dir, filename);
-                FileUtils.copyFile(file, newFile);
-            } catch (IOException e) {
-                throw new VcsException(e.getMessage());
-            }
+            File newFile = new File(dir, filename);
+            FileUtils.copyFile(file, newFile);
         }
     }
 
-    public static void removeFileAndHashFromCurrentDir(String filename) throws VcsException {
+    public static void removeFileAndHashFromCurrentDir(String filename) throws IOException {
         String dir = curDir();
         File file = new File(userDir(), filename);
-        try {
-            Files.deleteIfExists(Paths.get(dir, filename + hashSuffix));
-            Files.deleteIfExists(Paths.get(dir, filename));
-        } catch (IOException e) {
-            throw new VcsException(e.getMessage());
-        }
+        Files.deleteIfExists(Paths.get(dir, filename + hashSuffix));
+        Files.deleteIfExists(Paths.get(dir, filename));
     }
 
     public static boolean checkFile(String arg) {
         File f = new File(arg);
-        if(!f.isFile() || !f.canRead()) {
+        if (!f.isFile() || !f.canRead()) {
             System.out.println("Incorrect path: " + arg);
             return false;
         }

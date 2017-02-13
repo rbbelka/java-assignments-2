@@ -1,6 +1,8 @@
 package vcs.commands.impl;
 
 import vcs.commands.Command;
+import vcs.exceptions.VcsException;
+import vcs.exceptions.WrongNumberOfArgumentsException;
 import vcs.repo.Repository;
 import vcs.repo.Revision;
 
@@ -12,10 +14,9 @@ import static vcs.Main.getRepo;
  * @author natalia on 25.09.16.
  */
 public class LogCommand implements Command {
-    public void execute(List<String> args) {
+    public void execute(List<String> args) throws VcsException {
         if (args.size() > 0) {
-            System.out.println("Command does not accept any arguments");
-            return;
+            throw new WrongNumberOfArgumentsException("Command does not accept any arguments");
         }
         Repository repo = getRepo();
         String branchName = repo.getCurrentBranchName();

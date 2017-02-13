@@ -1,8 +1,10 @@
 package vcs.commands.impl;
 
 import vcs.commands.Command;
-import vcs.util.VcsException;
+import vcs.exceptions.VcsException;
+import vcs.exceptions.WrongNumberOfArgumentsException;
 
+import java.io.IOException;
 import java.util.List;
 
 import static vcs.Main.getRepo;
@@ -11,10 +13,9 @@ import static vcs.Main.getRepo;
  * @author natalia on 25.09.16.
  */
 public class StatusCommand implements Command {
-    public void execute(List<String> args) throws VcsException {
+    public void execute(List<String> args) throws VcsException, IOException {
         if (args.size() > 0) {
-            System.out.println("Command does not accept any arguments");
-            return;
+            throw new WrongNumberOfArgumentsException("Command does not accept any arguments");
         }
 
         List<String> untracked = getRepo().getStorage().getUntracked();

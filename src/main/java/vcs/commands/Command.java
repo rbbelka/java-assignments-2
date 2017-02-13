@@ -1,6 +1,6 @@
 package vcs.commands;
 
-import vcs.util.VcsException;
+import vcs.exceptions.VcsException;
 
 import java.io.IOException;
 import java.util.List;

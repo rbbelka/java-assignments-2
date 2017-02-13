@@ -1,10 +1,10 @@
 package vcs.commands.impl;
 
 import vcs.commands.Command;
-import vcs.util.VcsException;
+import vcs.exceptions.BranchNotSpecifiedException;
+import vcs.exceptions.VcsException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static vcs.Main.getRepo;
 
@@ -21,7 +21,7 @@ public class BranchCommand implements Command {
             if (args.size() > 1) {
                 getRepo().deleteBranch(args.get(1));
             } else {
-                System.out.println("Branch is not specified");
+                throw new BranchNotSpecifiedException("Branch is not specified");
             }
             return;
         }

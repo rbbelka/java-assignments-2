@@ -1,7 +1,8 @@
 package vcs.commands.impl;
 
 import vcs.commands.Command;
-import vcs.util.VcsException;
+import vcs.exceptions.WrongNumberOfArgumentsException;
+import vcs.exceptions.VcsException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,8 +19,7 @@ public class CleanCommand implements Command {
     @Override
     public void execute(List<String> args) throws VcsException {
         if (args.size() > 0) {
-            System.out.println("Command does not accept any arguments");
-            return;
+            throw new WrongNumberOfArgumentsException("Command does not accept any arguments");
         }
         List<String> untracked = getRepo().getStorage().getUntracked();
         try {

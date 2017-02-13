@@ -1,8 +1,9 @@
 package vcs.commands.impl;
 
 import vcs.commands.Command;
+import vcs.exceptions.WrongNumberOfArgumentsException;
 import vcs.repo.Repository;
-import vcs.util.VcsException;
+import vcs.exceptions.VcsException;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,10 +18,9 @@ import static vcs.util.Util.*;
 
 public class InitCommand implements Command {
 
-    public void execute(List<String> args) throws VcsException {
+    public void execute(List<String> args) throws VcsException, IOException {
         if (args.size() > 0) {
-            System.out.println("Command does not accept any arguments");
-            return;
+            throw new WrongNumberOfArgumentsException("Command does not accept any arguments");
         }
 
         File vcsDir = new File(vcsDir());
@@ -33,20 +33,16 @@ public class InitCommand implements Command {
         }
 
         if (!vcsDir.mkdirs()) {
-            throw new VcsException("Can't create vcs folder");
+            throw new IOException("Can't create vcs folder");
         }
 
         if (!curDir.mkdirs()) {
-            throw new VcsException("Can't create temp folder");
+            throw new IOException("Can't create temp folder");
         }
 
-        try {
-            if (!init.createNewFile()) {
-                vcsDir.delete();
-                throw new VcsException("Can't create init file");
-            }
-        } catch (IOException e) {
-            throw new VcsException(e.getMessage());
+        if (!init.createNewFile()) {
+            vcsDir.delete();
+            throw new IOException("Can't create init file");
         }
 
         setRepo(Repository.createRepository(userDir(), curDir()));

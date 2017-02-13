@@ -1,7 +1,8 @@
 package vcs.commands.impl;
 
 import vcs.commands.Command;
-import vcs.util.VcsException;
+import vcs.exceptions.WrongNumberOfArgumentsException;
+import vcs.exceptions.VcsException;
 
 import java.io.IOException;
 import java.util.List;
@@ -15,8 +16,7 @@ import static vcs.Main.getRepo;
 public class MergeCommand implements Command {
     public void execute(List<String> args) throws VcsException, IOException {
         if (args.size() == 0) {
-            System.out.println("Branch to merge is not specified");
-            return;
+            throw new WrongNumberOfArgumentsException("Branch to merge is not specified");
         }
         String message = "";
         if (args.size() > 1) {

@@ -1,6 +1,7 @@
 package vcs.repo;
 
-import vcs.util.VcsException;
+
+import vcs.exceptions.*;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -20,15 +21,15 @@ public class Repository implements Serializable {
     private Branch currentBranch;
     private final Map<String, Branch> branches;
 
-    private Repository(String dir, String tempDir) throws VcsException {
+    private Repository(String dir, String tempDir) {
         storage = new Storage(dir, tempDir);
-        revisions =  new HashMap<>();
+        revisions = new HashMap<>();
         currentBranch = new Branch(DEFAULT_BRANCH, 0);
         branches = new HashMap<>();
         branches.put(currentBranch.getName(), currentBranch);
     }
 
-    public static Repository createRepository(String dir, String tempDir) throws VcsException {
+    public static Repository createRepository(String dir, String tempDir) {
         return new Repository(dir, tempDir);
     }
 
@@ -48,10 +49,7 @@ public class Repository implements Serializable {
         return revisions.get(previous);
     }
 
-    public void commit(String message) throws VcsException, IOException {
-        if (currentBranch == null) {
-            throw new VcsException("No tracked branch for commit");
-        }
+    public void commit(String message) throws IOException {
         int id = addRevision(message);
         System.out.println("Committed revision " + id + " to branch " + currentBranch.getName());
         storage.writeRevision(id);
@@ -70,7 +68,7 @@ public class Repository implements Serializable {
     public void checkoutBranch(String name) throws VcsException, IOException {
         Branch branch = branches.get(name);
         if (branch == null) {
-            throw new VcsException("Checkout failed: branch not found");
+            throw new BranchNotFoundException("Checkout failed: branch not found");
         }
         currentBranch = branch;
         currentRevision = branch.getRevision();
@@ -79,19 +77,18 @@ public class Repository implements Serializable {
     }
 
     public void checkoutRevision(String id) throws VcsException, IOException {
-        try {
-            Revision revision = revisions.get(Integer.parseInt(id));
-            Branch branch = branches.get(revision.getBranchName());
-            if (branch == null) {
-                throw new VcsException();
-            }
-            currentRevision = revision.getId();
-            currentBranch = branch;
-            System.out.println("Checked out revision " + revision.getId());
-            storage.checkoutRevision(currentRevision);
-        } catch (Exception e) {
-            throw new VcsException("Checkout failed: revision not found");
+        Revision revision = revisions.get(Integer.parseInt(id));
+        if (revision == null) {
+            throw new RevisionNotFoundException("Checkout failed: revision not found");
         }
+        Branch branch = branches.get(revision.getBranchName());
+        if (branch == null) {
+            throw new RevisionNotFoundException("Checkout failed: revision is incorrect");
+        }
+        currentRevision = revision.getId();
+        currentBranch = branch;
+        storage.checkoutRevision(currentRevision);
+        System.out.println("Checked out revision " + revision.getId());
     }
 
     public void createBranch(String name) throws VcsException {
@@ -100,16 +97,16 @@ public class Repository implements Serializable {
             branches.put(name, branch);
             System.out.println("Branch " + name + " created");
         } else {
-            throw new VcsException("Branch already exists");
+            throw new BranchAlreadyExistsException("Branch creation failed : branch already exists");
         }
     }
 
     public void deleteBranch(String name) throws VcsException {
         if (name.equals(currentBranch.getName())) {
-            throw new VcsException("Can't delete current branch");
+            throw new CurrentBranchDeletionException("Delete failed: can't delete current branch");
         }
         if (branches.remove(name) == null) {
-            throw new VcsException("Branch not found");
+            throw new BranchNotFoundException("Delete failed: branch not found");
         }
         System.out.println("Branch " + name + " deleted");
     }
@@ -117,7 +114,7 @@ public class Repository implements Serializable {
     public void merge(String branchToMerge, String message) throws VcsException, IOException {
         Branch branch = branches.get(branchToMerge);
         if (branch == null) {
-            throw new VcsException("Branch not found");
+            throw new BranchNotFoundException("Merge failed: branch not found");
         }
         int fromId = branch.getRevision();
         int baseId = findLCA(fromId, currentBranch.getRevision());

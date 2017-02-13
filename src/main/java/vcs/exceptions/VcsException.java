@@ -1,4 +1,4 @@
-package vcs.util;
+package vcs.exceptions;
 
 /**
  * @author natalia on 27.09.16.

@@ -4,7 +4,7 @@ import vcs.commands.Command;
 import vcs.commands.CommandFactory;
 import vcs.repo.Repository;
 import vcs.util.Serializer;
-import vcs.util.VcsException;
+import vcs.exceptions.VcsException;
 
 import java.io.File;
 import java.io.IOException;

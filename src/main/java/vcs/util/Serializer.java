@@ -14,7 +14,7 @@ public class Serializer {
         File file = new File(filename);
         if (!file.exists()) {
             if (!file.createNewFile())
-                throw new IOException("File cannot be created");
+                throw new IOException("Serialization file cannot be created");
         }
 
         FileOutputStream os = new FileOutputStream(filename);
