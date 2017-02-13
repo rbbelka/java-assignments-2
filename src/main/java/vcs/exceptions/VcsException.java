@@ -1,7 +1,7 @@
 package vcs.exceptions;
 
 /**
- * @author natalia on 27.09.16.
+ * General class for exceptions throwed in app
  */
 public class VcsException extends Exception {
 

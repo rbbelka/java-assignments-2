@@ -8,10 +8,13 @@ import vcs.repo.Repository;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * @author natalia on 25.09.16.
- */
 public class StatusCommand implements Command {
+
+    /**
+     * Prints out unstaged changes in working directory.
+     *
+     * @throws WrongNumberOfArgumentsException if any arguments given.
+     */
     public void execute(Repository repo, List<String> args) throws VcsException, IOException {
         if (args.size() > 0) {
             throw new WrongNumberOfArgumentsException("Command does not accept any arguments");

@@ -7,11 +7,18 @@ import vcs.repo.Repository;
 
 import java.io.IOException;
 import java.util.List;
-/**
- * @author natalia on 25.09.16.
- */
+
 
 public class AddCommand implements Command {
+
+    /**
+     * Adds files to repository
+     * Stages changes(including deletion of file) in files for commit
+     *
+     * @param args list of paths of files to add
+     *
+     * @throws WrongNumberOfArgumentsException if no arguments provided
+     */
     public void execute(Repository repo, List<String> args) throws IOException, VcsException {
         if (args.size() == 0) {
             throw new WrongNumberOfArgumentsException("Files to add are not specified");

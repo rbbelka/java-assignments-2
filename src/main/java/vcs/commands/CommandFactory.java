@@ -5,9 +5,7 @@ import vcs.commands.impl.*;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author natalia on 25.09.16.
- */
+
 public class CommandFactory {
     private static final Map<String, Command> supportedCommands = new HashMap<>();
 
@@ -25,6 +23,11 @@ public class CommandFactory {
         supportedCommands.put("status", new StatusCommand());
     }
 
+    /**
+     * Provides {@link Command} by given name.
+     *
+     * @param commandName name of command to get
+     */
     public static Command createCommand(String commandName) {
         return supportedCommands.get(commandName);
     }

@@ -8,11 +8,14 @@ import vcs.repo.Repository;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * @author natalia on 28.09.16.
- */
-
 public class ResetCommand  implements Command {
+
+    /**
+     * Reset given files state in {@link Repository},
+     * removes them from controlled.
+     *
+     * @throws WrongNumberOfArgumentsException if no arguments provided.
+     */
     public void execute(Repository repo, List<String> args) throws VcsException, IOException {
         if (args.size() == 0) {
             throw new WrongNumberOfArgumentsException("Files to reset are not specified");

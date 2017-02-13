@@ -12,7 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author natalia on 26.09.16.
+ * Class represents logic of repository.
+ * Holds and changes info about branches and revisions.
  */
 public class Repository implements Serializable {
 
@@ -37,10 +38,6 @@ public class Repository implements Serializable {
         return new Repository(dir);
     }
 
-    private String getVcsDir() {
-        return getStorage().getRepoDir() + "/.vcs";
-    }
-
     public String getInitFile() {
         return getVcsDir() + "/init";
     }
@@ -61,10 +58,6 @@ public class Repository implements Serializable {
         return getRevisionById(currentRevision);
     }
 
-    private Revision getRevisionById(int previous) {
-        return revisions.get(previous);
-    }
-
     public boolean checkInit() {
         return new File(getInitFile()).exists();
     }
@@ -73,16 +66,6 @@ public class Repository implements Serializable {
         int id = addRevision(message);
         storage.writeRevision(id);
         System.out.println("Committed revision " + id + " to branch " + currentBranch.getName());
-    }
-
-    private int addRevision(String message) {
-        int id = nextRevisionNumber;
-        Revision revision = new Revision(id, currentRevision, currentBranch.getName(), message);
-        revisions.put(id, revision);
-        currentRevision = id;
-        currentBranch.setRevision(id);
-        nextRevisionNumber++;
-        return id;
     }
 
     public void checkoutBranch(String name) throws VcsException, IOException {
@@ -152,19 +135,6 @@ public class Repository implements Serializable {
         storage.checkoutRevision(currentRevision);
     }
 
-    private int findLCA(int fromId, int toId) {
-        Revision from = getRevisionById(fromId);
-        Revision to = getRevisionById(toId);
-        while (from.getId() != to.getId()) {
-            if (from.getId() > to.getId()) {
-                from = getRevisionById(from.getPrevious());
-            } else {
-                to = getRevisionById(to.getPrevious());
-            }
-        }
-        return from.getId();
-    }
-
     public void createFileStructure() throws IOException {
         File vcsDir = new File(getVcsDir());
         File curDir = new File(getStorage().getCurDir());
@@ -197,5 +167,36 @@ public class Repository implements Serializable {
             revision = getRevisionById(revision.getPrevious());
         }
         return revisions;
+    }
+
+    private Revision getRevisionById(int previous) {
+        return revisions.get(previous);
+    }
+
+    private int findLCA(int fromId, int toId) {
+        Revision from = getRevisionById(fromId);
+        Revision to = getRevisionById(toId);
+        while (from.getId() != to.getId()) {
+            if (from.getId() > to.getId()) {
+                from = getRevisionById(from.getPrevious());
+            } else {
+                to = getRevisionById(to.getPrevious());
+            }
+        }
+        return from.getId();
+    }
+
+    private int addRevision(String message) {
+        int id = nextRevisionNumber;
+        Revision revision = new Revision(id, currentRevision, currentBranch.getName(), message);
+        revisions.put(id, revision);
+        currentRevision = id;
+        currentBranch.setRevision(id);
+        nextRevisionNumber++;
+        return id;
+    }
+
+    private String getVcsDir() {
+        return getStorage().getRepoDir() + "/.vcs";
     }
 }

@@ -5,7 +5,7 @@ import vcs.repo.Repository;
 import java.io.*;
 
 /**
- * @author natalia on 27.09.16.
+ * Reads from and writes to init file state of {@link Repository}
  */
 public class Serializer {
 

@@ -15,7 +15,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * @author natalia on 27.09.16.
+ * Class represents file storage of repository.
+ * Works with file system
  */
 public class Storage implements Serializable {
 

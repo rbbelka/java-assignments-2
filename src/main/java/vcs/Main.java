@@ -13,6 +13,9 @@ import java.util.List;
 import static vcs.repo.Repository.createRepository;
 
 
+/**
+ * Entry point of app
+ */
 public class Main {
 
     public static void main(String[] args) {

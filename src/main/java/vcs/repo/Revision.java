@@ -1,7 +1,12 @@
 package vcs.repo;
 
 import java.io.Serializable;
-
+/**
+ * Class represents revision.
+ * Identified by id.
+ * Holds commit message, name of branch where was commited
+ * and id of previous commit.
+ */
 public class Revision implements Serializable {
     private final int id;
     private final int previous;

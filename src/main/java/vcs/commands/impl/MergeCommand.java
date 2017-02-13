@@ -9,10 +9,15 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * @author natalia on 25.09.16.
- */
 public class MergeCommand implements Command {
+
+    /**
+     * Merges given branch into current branch
+     *
+     * @param args Branch to merge and commit message
+     *
+     * @throws WrongNumberOfArgumentsException if no arguments provided.
+     */
     public void execute(Repository repo, List<String> args) throws VcsException, IOException {
         if (args.size() == 0) {
             throw new WrongNumberOfArgumentsException("Branch to merge is not specified");

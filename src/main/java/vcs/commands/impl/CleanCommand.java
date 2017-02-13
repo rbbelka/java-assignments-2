@@ -12,7 +12,12 @@ import java.util.List;
  * @author natalia on 28.09.16.
  */
 public class CleanCommand implements Command {
-    @Override
+
+    /**
+     * Removes from working directory files that is not controlled by vcs.
+     *
+     * @throws WrongNumberOfArgumentsException if any arguments given.
+     */
     public void execute(Repository repo, List<String> args) throws VcsException, IOException {
         if (args.size() > 0) {
             throw new WrongNumberOfArgumentsException("Command does not accept any arguments");

@@ -8,12 +8,14 @@ import vcs.repo.Repository;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * @author natalia on 28.09.16.
- */
 public class RmCommand implements Command {
 
-    @Override
+    /**
+     * Removes given files from working directory
+     * and from {@link Repository}.
+     *
+     * @throws WrongNumberOfArgumentsException if no arguments provided.
+     */
     public void execute(Repository repo, List<String> args) throws VcsException, IOException {
         if (args.size() == 0) {
             throw new WrongNumberOfArgumentsException("Files to delete are not specified");

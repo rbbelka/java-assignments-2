@@ -7,10 +7,15 @@ import vcs.repo.Repository;
 
 import java.util.List;
 
-/**
- * @author natalia on 25.09.16.
- */
 public class BranchCommand implements Command {
+
+    /**
+     * Works with branches of {@link Repository}.
+     *
+     * If no args provided prints current branch.
+     * If passed option -d deletes given branch,
+     * else creates branch with given name.
+     */
     public void execute(Repository repo, List<String> args) throws VcsException {
         if (args.size() == 0) {
             System.out.println(repo.getCurrentBranchName());

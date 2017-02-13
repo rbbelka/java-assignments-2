@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Holds list of files and their hashes for revision
+ * Holds map of files and their hashes for revision.
  */
 public class Snapshot implements Serializable {
 

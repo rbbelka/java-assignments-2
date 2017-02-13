@@ -14,6 +14,13 @@ import java.util.stream.Collectors;
  */
 public class CommitCommand implements Command {
 
+    /**
+     * Commits staged changes
+     *
+     * @param args - commit message
+     *
+     * @throws WrongNumberOfArgumentsException if no arguments provided.
+     */
     public void execute(Repository repo, List<String> args) throws VcsException, IOException {
         if (args.size() == 0) {
             throw new WrongNumberOfArgumentsException("Commit message is not entered");

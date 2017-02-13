@@ -8,10 +8,14 @@ import vcs.repo.Revision;
 
 import java.util.List;
 
-/**
- * @author natalia on 25.09.16.
- */
 public class LogCommand implements Command {
+
+    /**
+     * Prints out commits in current branch
+     * from newest to oldest
+     *
+     * @throws WrongNumberOfArgumentsException if any arguments given.
+     */
     public void execute(Repository repo, List<String> args) throws VcsException {
         if (args.size() > 0) {
             throw new WrongNumberOfArgumentsException("Command does not accept any arguments");

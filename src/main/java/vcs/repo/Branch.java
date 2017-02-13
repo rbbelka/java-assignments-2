@@ -3,7 +3,8 @@ package vcs.repo;
 import java.io.Serializable;
 
 /**
- * @author natalia on 26.09.16.
+ * Class represents branch.
+ * Identified by name and holds last branch commit.
  */
 public class Branch implements Serializable {
 
