@@ -2,12 +2,14 @@ package vcs.repo;
 
 
 import vcs.exceptions.*;
-import vcs.util.Serializer;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author natalia on 26.09.16.
@@ -35,7 +37,7 @@ public class Repository implements Serializable {
         return new Repository(dir);
     }
 
-    public String getVcsDir() {
+    private String getVcsDir() {
         return getStorage().getRepoDir() + "/.vcs";
     }
 
@@ -59,7 +61,7 @@ public class Repository implements Serializable {
         return getRevisionById(currentRevision);
     }
 
-    public Revision getRevisionById(int previous) {
+    private Revision getRevisionById(int previous) {
         return revisions.get(previous);
     }
 
@@ -110,6 +112,9 @@ public class Repository implements Serializable {
     }
 
     public void createBranch(String name) throws VcsException {
+        if (currentRevision == 0) {
+            throw new RevisionNotFoundException("There is no commit to create a branch from");
+        }
         if (branches.get(name) == null) {
             Branch branch = new Branch(name, currentRevision);
             branches.put(name, branch);
@@ -174,9 +179,23 @@ public class Repository implements Serializable {
             throw new IOException("Can't create temp folder");
         }
 
+
         if (!init.createNewFile()) {
             vcsDir.delete();
             throw new IOException("Can't create init file");
         }
+    }
+
+    public List<Revision> getLog() {
+        List<Revision> revisions = new ArrayList<>();
+        Revision revision = getCurrentRevision();
+        if (revision == null) {
+            return revisions;
+        }
+        while (revision != null) {
+            revisions.add(revision);
+            revision = getRevisionById(revision.getPrevious());
+        }
+        return revisions;
     }
 }

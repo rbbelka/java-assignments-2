@@ -16,16 +16,14 @@ public class LogCommand implements Command {
         if (args.size() > 0) {
             throw new WrongNumberOfArgumentsException("Command does not accept any arguments");
         }
-        String branchName = repo.getCurrentBranchName();
-        Revision revision = repo.getCurrentRevision();
-        if (revision == null) {
-            System.out.println("Current branch " + branchName + " does not have any commits yet");
-            return;
+        List<Revision> revisions = repo.getLog();
+        if (revisions.size() == 0) {
+            System.out.println("Current branch does not have any commits yet");
         }
-        System.out.println("Current branch: " + branchName);
-        while (revision != null) {
+
+        System.out.println("Current branch: " + revisions.get(0).getBranchName());
+        for (Revision revision : revisions) {
             System.out.println(revision.getId() + ": " + revision.getCommitMessage());
-            revision = repo.getRevisionById(revision.getPrevious());
         }
     }
 }

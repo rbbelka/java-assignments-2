@@ -1,10 +1,9 @@
 package vcs.commands.impl;
 
 import vcs.commands.Command;
+import vcs.exceptions.VcsException;
 import vcs.exceptions.WrongNumberOfArgumentsException;
 import vcs.repo.Repository;
-import vcs.util.Util;
-import vcs.exceptions.VcsException;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,9 +19,6 @@ public class RmCommand implements Command {
             throw new WrongNumberOfArgumentsException("Files to delete are not specified");
         }
         for (String arg : args) {
-            if (!Util.checkFile(arg))
-                continue;
-
             boolean deleted = repo.getStorage().removeFile(arg);
 
             if (deleted)

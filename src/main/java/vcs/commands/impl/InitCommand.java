@@ -1,11 +1,10 @@
 package vcs.commands.impl;
 
 import vcs.commands.Command;
+import vcs.exceptions.VcsException;
 import vcs.exceptions.WrongNumberOfArgumentsException;
 import vcs.repo.Repository;
-import vcs.exceptions.VcsException;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 

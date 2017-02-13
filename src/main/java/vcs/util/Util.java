@@ -28,15 +28,17 @@ public class Util {
         return getMD5(file1).equals(getMD5(file2));
     }
 
-    public static void copyFileAndHashToCurrentDir(String filename, String userDir, String curDir) throws IOException {
+    public static boolean copyFileAndHashToCurrentDir(String filename, String userDir, String curDir) throws IOException {
         File file = new File(userDir, filename);
         if (file.exists()) {
             File hashFile = new File(curDir, filename + hashSuffix);
-            FileUtils.writeStringToFile(hashFile, getMD5(file));
+            FileUtils.writeStringToFile(hashFile, filename + getMD5(file));
 
             File newFile = new File(curDir, filename);
             FileUtils.copyFile(file, newFile);
+            return true;
         }
+        return false;
     }
 
     public static void removeFileAndHashFromCurrentDir(String filename, String userDir, String curDir) throws IOException {
@@ -47,11 +49,7 @@ public class Util {
 
     public static boolean checkFile(String arg) {
         File f = new File(arg);
-        if (!f.isFile() || !f.canRead()) {
-            System.out.println("Incorrect path: " + arg);
-            return false;
-        }
-        return true;
+        return f.isFile();
     }
 
     public static Set<File> listFilesFromDir(String dirname) {

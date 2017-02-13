@@ -2,8 +2,8 @@ package vcs.commands.impl;
 
 import vcs.commands.Command;
 import vcs.exceptions.RevisionNotSpecifiedException;
-import vcs.exceptions.WrongNumberOfArgumentsException;
 import vcs.exceptions.VcsException;
+import vcs.exceptions.WrongNumberOfArgumentsException;
 import vcs.repo.Repository;
 
 import java.io.IOException;

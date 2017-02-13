@@ -2,8 +2,8 @@ package vcs.repo;
 
 import org.apache.commons.io.FileUtils;
 import vcs.exceptions.MergeConflictException;
-import vcs.util.Util;
 import vcs.exceptions.VcsException;
+import vcs.util.Util;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,14 +36,20 @@ public class Storage implements Serializable {
         return repoDir;
     }
 
-    public void addFile(String filename) throws IOException {
-        Util.copyFileAndHashToCurrentDir(filename, repoDir, curDir);
-        controlledFiles.add(filename);
+    public boolean addFile(String filename) throws IOException {
+        if (Util.copyFileAndHashToCurrentDir(filename, repoDir, curDir)) {
+            controlledFiles.add(filename);
+            return true;
+        } else if (controlledFiles.contains(filename)) {
+            Util.removeFileAndHashFromCurrentDir(filename, repoDir, curDir);
+            return true;
+        }
+        return false;
     }
 
-    public void resetFile(String filename) throws IOException {
+    public boolean resetFile(String filename) throws IOException {
         Util.removeFileAndHashFromCurrentDir(filename, repoDir, curDir);
-        controlledFiles.remove(filename);
+        return controlledFiles.remove(filename);
     }
 
     public boolean removeFile(String filename) throws IOException {
@@ -107,7 +113,7 @@ public class Storage implements Serializable {
         for (String filePath : controlledFiles) {
             File file = new File(curDir, filePath);
             if (file.exists()) {
-                String hash = Util.getMD5(file);
+                String hash = filePath + Util.getMD5(file);
                 snapshot.addFile(filePath, hash);
                 File storedFile = new File(storageDir, hash);
                 if (!storedFile.exists()) {

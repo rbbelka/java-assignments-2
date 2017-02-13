@@ -2,11 +2,10 @@ package vcs;
 
 import vcs.commands.Command;
 import vcs.commands.CommandFactory;
+import vcs.exceptions.VcsException;
 import vcs.repo.Repository;
 import vcs.util.Serializer;
-import vcs.exceptions.VcsException;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
