@@ -24,9 +24,6 @@ public class Storage implements Serializable {
 
     // list of files under control
     private final Set<String> controlledFiles = new HashSet<>();
-    private final Set<String> addedFiles = new HashSet<>();
-    private final Set<String> modifiedFiles = new HashSet<>();
-    private final Set<String> deletedFiles = new HashSet<>();
 
     private final Map<Integer, Snapshot> snapshots = new HashMap<>();
 
@@ -41,13 +38,11 @@ public class Storage implements Serializable {
 
     public void addFile(String filename) throws IOException {
         Util.copyFileAndHashToCurrentDir(filename, repoDir, curDir);
-        addedFiles.add(filename);
         controlledFiles.add(filename);
     }
 
     public void resetFile(String filename) throws IOException {
         Util.removeFileAndHashFromCurrentDir(filename, repoDir, curDir);
-        addedFiles.remove(filename);
         controlledFiles.remove(filename);
     }
 
@@ -62,18 +57,6 @@ public class Storage implements Serializable {
 
     public Set<String> getControlledFiles() {
         return controlledFiles;
-    }
-
-    public Set<String> getAddedFiles() {
-        return addedFiles;
-    }
-
-    public Set<String> getDeletedFiles() {
-        return deletedFiles;
-    }
-
-    public Set<String> getModifiedFiles() {
-        return modifiedFiles;
     }
 
     public List<String> getUntracked() {
