@@ -18,26 +18,6 @@ public class Util {
 
     private static String hashSuffix = "hash";
 
-    public static String userDir() {
-        return System.getProperty("user.dir");
-    }
-
-    public static String vcsDir() {
-        return userDir() + "/.vcs";
-    }
-
-    public static String getInitFile() {
-        return vcsDir() + "/init";
-    }
-
-    public static String curDir() {
-        return vcsDir() + "/current";
-    }
-
-    public static String storageDir() {
-        return vcsDir() + "/storage";
-    }
-
     public static String getMD5(File file) throws IOException {
         try (FileInputStream fis = new FileInputStream(file)) {
             return DigestUtils.md5Hex(fis);
@@ -48,23 +28,21 @@ public class Util {
         return getMD5(file1).equals(getMD5(file2));
     }
 
-    public static void copyFileAndHashToCurrentDir(String filename) throws IOException {
-        String dir = curDir();
-        File file = new File(userDir(), filename);
+    public static void copyFileAndHashToCurrentDir(String filename, String userDir, String curDir) throws IOException {
+        File file = new File(userDir, filename);
         if (file.exists()) {
-            File hashFile = new File(dir, filename + hashSuffix);
+            File hashFile = new File(curDir, filename + hashSuffix);
             FileUtils.writeStringToFile(hashFile, getMD5(file));
 
-            File newFile = new File(dir, filename);
+            File newFile = new File(curDir, filename);
             FileUtils.copyFile(file, newFile);
         }
     }
 
-    public static void removeFileAndHashFromCurrentDir(String filename) throws IOException {
-        String dir = curDir();
-        File file = new File(userDir(), filename);
-        Files.deleteIfExists(Paths.get(dir, filename + hashSuffix));
-        Files.deleteIfExists(Paths.get(dir, filename));
+    public static void removeFileAndHashFromCurrentDir(String filename, String userDir, String curDir) throws IOException {
+        File file = new File(userDir, filename);
+        Files.deleteIfExists(Paths.get(curDir, filename + hashSuffix));
+        Files.deleteIfExists(Paths.get(curDir, filename));
     }
 
     public static boolean checkFile(String arg) {

@@ -2,20 +2,18 @@ package vcs.commands.impl;
 
 import vcs.commands.Command;
 import vcs.exceptions.WrongNumberOfArgumentsException;
+import vcs.repo.Repository;
 import vcs.util.Util;
 import vcs.exceptions.VcsException;
 
 import java.io.IOException;
 import java.util.List;
-
-import static vcs.Main.getRepo;
-
 /**
  * @author natalia on 25.09.16.
  */
 
 public class AddCommand implements Command {
-    public void execute(List<String> args) throws IOException, VcsException {
+    public void execute(Repository repo, List<String> args) throws IOException, VcsException {
         if (args.size() == 0) {
             throw new WrongNumberOfArgumentsException("Files to add are not specified");
         }
@@ -23,7 +21,7 @@ public class AddCommand implements Command {
             if (!Util.checkFile(arg))
                 continue;
 
-            getRepo().getStorage().addFile(arg);
+            repo.getStorage().addFile(arg);
             System.out.println("Added " + arg);
         }
     }

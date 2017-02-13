@@ -2,16 +2,12 @@ package vcs.commands.impl;
 
 import vcs.commands.Command;
 import vcs.exceptions.WrongNumberOfArgumentsException;
+import vcs.repo.Repository;
 import vcs.util.Util;
 import vcs.exceptions.VcsException;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
-
-import static vcs.Main.getRepo;
-import static vcs.util.Util.userDir;
 
 /**
  * @author natalia on 28.09.16.
@@ -19,7 +15,7 @@ import static vcs.util.Util.userDir;
 public class RmCommand implements Command {
 
     @Override
-    public void execute(List<String> args) throws VcsException, IOException {
+    public void execute(Repository repo, List<String> args) throws VcsException, IOException {
         if (args.size() == 0) {
             throw new WrongNumberOfArgumentsException("Files to delete are not specified");
         }
@@ -27,9 +23,7 @@ public class RmCommand implements Command {
             if (!Util.checkFile(arg))
                 continue;
 
-            boolean deleted;
-            getRepo().getStorage().resetFile(arg);
-            deleted = Files.deleteIfExists(Paths.get(userDir(), arg));
+            boolean deleted = repo.getStorage().removeFile(arg);
 
             if (deleted)
                 System.out.println("Removed " + arg);

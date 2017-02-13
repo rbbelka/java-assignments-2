@@ -3,24 +3,23 @@ package vcs.commands.impl;
 import vcs.commands.Command;
 import vcs.exceptions.VcsException;
 import vcs.exceptions.WrongNumberOfArgumentsException;
+import vcs.repo.Repository;
 
 import java.io.IOException;
 import java.util.List;
-
-import static vcs.Main.getRepo;
 
 /**
  * @author natalia on 25.09.16.
  */
 public class StatusCommand implements Command {
-    public void execute(List<String> args) throws VcsException, IOException {
+    public void execute(Repository repo, List<String> args) throws VcsException, IOException {
         if (args.size() > 0) {
             throw new WrongNumberOfArgumentsException("Command does not accept any arguments");
         }
 
-        List<String> untracked = getRepo().getStorage().getUntracked();
-        List<String> modified = getRepo().getStorage().getModifiedNotStaged();
-        List<String> deleted = getRepo().getStorage().getDeletedNotStaged();
+        List<String> untracked = repo.getStorage().getUntracked();
+        List<String> modified = repo.getStorage().getModifiedNotStaged();
+        List<String> deleted = repo.getStorage().getDeletedNotStaged();
 
         printInfo(untracked, "Untracked");
         printInfo(modified, "Modified");

@@ -2,7 +2,9 @@ package vcs.repo;
 
 
 import vcs.exceptions.*;
+import vcs.util.Serializer;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
@@ -21,16 +23,24 @@ public class Repository implements Serializable {
     private Branch currentBranch;
     private final Map<String, Branch> branches;
 
-    private Repository(String dir, String tempDir) {
-        storage = new Storage(dir, tempDir);
+    private Repository(String dir) {
+        storage = new Storage(dir);
         revisions = new HashMap<>();
         currentBranch = new Branch(DEFAULT_BRANCH, 0);
         branches = new HashMap<>();
         branches.put(currentBranch.getName(), currentBranch);
     }
 
-    public static Repository createRepository(String dir, String tempDir) {
-        return new Repository(dir, tempDir);
+    public static Repository createRepository(String dir) {
+        return new Repository(dir);
+    }
+
+    public String getVcsDir() {
+        return getStorage().getRepoDir() + "/.vcs";
+    }
+
+    public String getInitFile() {
+        return getVcsDir() + "/init";
     }
 
     public Storage getStorage() {
@@ -47,6 +57,10 @@ public class Repository implements Serializable {
 
     public Revision getRevisionById(int previous) {
         return revisions.get(previous);
+    }
+
+    public boolean checkInit() {
+        return new File(getInitFile()).exists();
     }
 
     public void commit(String message) throws IOException {
@@ -141,4 +155,5 @@ public class Repository implements Serializable {
         }
         return from.getId();
     }
+
 }

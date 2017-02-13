@@ -9,25 +9,22 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import static vcs.Main.setRepo;
-import static vcs.util.Util.*;
-
 /**
  * @author natalia on 25.09.16.
  */
 
 public class InitCommand implements Command {
 
-    public void execute(List<String> args) throws VcsException, IOException {
+    public void execute(Repository repo, List<String> args) throws VcsException, IOException {
         if (args.size() > 0) {
             throw new WrongNumberOfArgumentsException("Command does not accept any arguments");
         }
 
-        File vcsDir = new File(vcsDir());
-        File curDir = new File(curDir());
-        File init = new File(getInitFile());
+        File vcsDir = new File(repo.getVcsDir());
+        File curDir = new File(repo.getStorage().getCurDir());
+        File init = new File(repo.getInitFile());
 
-        if (vcs.Main.checkInit()) {
+        if (repo.checkInit()) {
             System.out.println("Repository has been already inited");
             return;
         }
@@ -37,6 +34,7 @@ public class InitCommand implements Command {
         }
 
         if (!curDir.mkdirs()) {
+            vcsDir.delete();
             throw new IOException("Can't create temp folder");
         }
 
@@ -44,8 +42,6 @@ public class InitCommand implements Command {
             vcsDir.delete();
             throw new IOException("Can't create init file");
         }
-
-        setRepo(Repository.createRepository(userDir(), curDir()));
 
         System.out.println("Succesful init");
 

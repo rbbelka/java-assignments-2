@@ -8,6 +8,7 @@ import vcs.exceptions.VcsException;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -29,9 +30,9 @@ public class Storage implements Serializable {
 
     private final Map<Integer, Snapshot> snapshots = new HashMap<>();
 
-    public Storage(String repoDir, String curDir) {
+    public Storage(String repoDir) {
         this.repoDir = repoDir;
-        this.curDir = curDir;
+        this.curDir = repoDir + "/.vcs/current";
     }
 
     public String getRepoDir() {
@@ -39,24 +40,28 @@ public class Storage implements Serializable {
     }
 
     public void addFile(String filename) throws IOException {
-        Util.copyFileAndHashToCurrentDir(filename);
+        Util.copyFileAndHashToCurrentDir(filename, repoDir, curDir);
         addedFiles.add(filename);
         controlledFiles.add(filename);
     }
 
     public void resetFile(String filename) throws IOException {
-        Util.removeFileAndHashFromCurrentDir(filename);
+        Util.removeFileAndHashFromCurrentDir(filename, repoDir, curDir);
         addedFiles.remove(filename);
         controlledFiles.remove(filename);
     }
 
+    public boolean removeFile(String filename) throws IOException {
+        resetFile(filename);
+        return Files.deleteIfExists(Paths.get(repoDir, filename));
+    }
+
+    public String getCurDir() {
+        return curDir;
+    }
 
     public Set<String> getControlledFiles() {
         return controlledFiles;
-    }
-
-    private boolean isControlled(String file) {
-        return controlledFiles.contains(file);
     }
 
     public Set<String> getAddedFiles() {
@@ -115,7 +120,7 @@ public class Storage implements Serializable {
 
     public void writeRevision(int revision) throws IOException {
         Snapshot snapshot = new Snapshot();
-        final String storageDir = Util.storageDir();
+        final String storageDir = getStorageDir();
         for (String filePath : controlledFiles) {
             File file = new File(curDir, filePath);
             if (file.exists()) {
@@ -131,7 +136,7 @@ public class Storage implements Serializable {
     }
 
     public void checkoutRevision(int revision) throws IOException {
-        final String storageDir = Util.storageDir();
+        final String storageDir = getStorageDir();
         for (String file : controlledFiles) {
             FileUtils.deleteQuietly(new File(repoDir, file));
         }
@@ -146,11 +151,7 @@ public class Storage implements Serializable {
         }
     }
 
-    private Snapshot getSnapshot(int revision) {
-        return snapshots.get(revision);
-    }
-
-    public void merge(int fromRevision, int toRevision, int baseRevision, int nextRevision) throws MergeConflictException {
+    public void merge(int fromRevision, int toRevision, int baseRevision, int nextRevision) throws VcsException {
         Snapshot from = getSnapshot(fromRevision);
         Snapshot to = getSnapshot(toRevision);
         Snapshot base = getSnapshot(baseRevision);
@@ -184,4 +185,21 @@ public class Storage implements Serializable {
         snapshots.put(nextRevision, result);
     }
 
+    public void clean() throws IOException {
+        List<String> untracked = getUntracked();
+        for (String path : untracked)
+            Files.deleteIfExists(Paths.get(getRepoDir(), path));
+    }
+
+    private String getStorageDir() {
+        return getRepoDir() + "/.vcs/storage";
+    }
+
+    private boolean isControlled(String file) {
+        return controlledFiles.contains(file);
+    }
+
+    private Snapshot getSnapshot(int revision) {
+        return snapshots.get(revision);
+    }
 }

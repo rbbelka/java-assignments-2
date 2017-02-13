@@ -11,12 +11,10 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import static vcs.util.Util.getInitFile;
+import static vcs.repo.Repository.createRepository;
+
 
 public class Main {
-
-    private static Repository repo;
-    private static final String initFile = getInitFile();
 
     public static void main(String[] args) {
 
@@ -32,39 +30,28 @@ public class Main {
             return;
         }
 
+        String userDir = System.getProperty("user.dir");
+        Repository repo = createRepository(userDir);
         try {
-        if (checkInit()) {
-                repo = Serializer.deserialize(initFile);
-        } else if (!commandName.equals("init")) {
-            initError();
-            return;
-        }
+            if (repo.checkInit()) {
+                repo = Serializer.deserialize(repo.getInitFile());
+            } else if (!commandName.equals("init")) {
+                initError();
+                return;
+            }
 
-        List<String> cmdArgs = Arrays.asList(args).subList(1, args.length);
-        try {
-            command.execute(cmdArgs);
-        } catch (VcsException e) {
-            System.out.println(e.getMessage());
-        }
+            List<String> cmdArgs = Arrays.asList(args).subList(1, args.length);
+            try {
+                command.execute(repo, cmdArgs);
+            } catch (VcsException e) {
+                System.out.println(e.getMessage());
+            }
 
-        Serializer.serialize(repo, initFile);
+        Serializer.serialize(repo, repo.getInitFile());
 
         } catch (IOException | ClassNotFoundException e) {
             System.out.println(e.getMessage());
         }
-    }
-
-    public static Repository getRepo() {
-        return repo;
-    }
-
-    public static void setRepo(Repository newRepo) {
-        if (newRepo != null)
-            repo = newRepo;
-    }
-
-    public static boolean checkInit() {
-        return (new File(getInitFile()).exists());
     }
 
     private static void inputError() {
