@@ -3,6 +3,8 @@ package ftp;
 import ftp.client.Client;
 import ftp.client.ClientImpl;
 import ftp.client.FileContent;
+import ftp.exceptions.FtpException;
+import ftp.exceptions.ServerException;
 import ftp.util.FileItem;
 import ftp.server.ServerImpl;
 import ftp.server.Server;
@@ -39,7 +41,7 @@ public class FtpTest {
 
 
     @Test
-    public void testListEmpty() throws IOException, InterruptedException {
+    public void testListEmpty() throws IOException, InterruptedException, FtpException {
         Server server = new ServerImpl(PORT);
         Thread tserver = new Thread(server);
         tserver.start();
@@ -59,7 +61,7 @@ public class FtpTest {
     }
 
     @Test
-    public void testList() throws IOException, InterruptedException {
+    public void testList() throws IOException, InterruptedException, FtpException {
         Server server = new ServerImpl(PORT + 1);
         Thread tserver = new Thread(server);
         tserver.start();
@@ -84,7 +86,7 @@ public class FtpTest {
     }
 
     @Test
-    public void testGet() throws IOException, InterruptedException {
+    public void testGet() throws IOException, InterruptedException, FtpException {
         Server server = new ServerImpl(PORT + 2);
         Thread tserver = new Thread(server);
         tserver.start();
@@ -113,7 +115,7 @@ public class FtpTest {
 
 
     @Test
-    public void testSeveralClients() throws IOException, InterruptedException {
+    public void testSeveralClients() throws IOException, InterruptedException, FtpException {
         Server server = new ServerImpl(PORT + 3);
         Thread tserver = new Thread(server);
         tserver.start();
@@ -135,7 +137,7 @@ public class FtpTest {
                                     list.stream().sorted().toArray()));
 
                     client.disconnect();
-                } catch (IOException e) {
+                } catch (IOException | FtpException e) {
                     throw new RuntimeException(e);
                 }
             });
@@ -147,7 +149,7 @@ public class FtpTest {
 
 
     @Test
-    public void testListTwoTimes() throws IOException, InterruptedException {
+    public void testListTwoTimes() throws IOException, InterruptedException, FtpException {
         Server server = new ServerImpl(PORT + 4);
         Thread tserver = new Thread(server);
         tserver.start();

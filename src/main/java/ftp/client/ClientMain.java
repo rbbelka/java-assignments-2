@@ -1,5 +1,6 @@
 package ftp.client;
 
+import ftp.exceptions.FtpException;
 import ftp.util.FileItem;
 import ftp.util.QueryType;
 import org.apache.commons.io.FileUtils;
@@ -38,8 +39,10 @@ public class ClientMain {
         Client client = new ClientImpl(host, port);
         try {
             client.connect();
-        } catch (IOException e) {
-            System.out.println("Couldn't connect to "+ host + " on port " + port);
+        } catch (FtpException e) {
+            System.err.println(e.getMessage());
+        }catch (IOException e) {
+            System.err.println("Couldn't connect to "+ host + " on port " + port);
             return;
         }
         try (Scanner scanner = new Scanner(System.in)) {
@@ -81,6 +84,8 @@ public class ClientMain {
                     }
                 } catch (IllegalArgumentException e) {
                     usage();
+                } catch (FtpException e) {
+                    System.err.println(e.getMessage());
                 }
             }
         } catch (IOException e) {

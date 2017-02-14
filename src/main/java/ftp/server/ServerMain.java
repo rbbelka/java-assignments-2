@@ -1,5 +1,7 @@
 package ftp.server;
 
+import ftp.exceptions.ServerException;
+
 /**
  * Main class to run server
  */
@@ -22,9 +24,14 @@ public class ServerMain {
         }
 
         Server server = new ServerImpl(port);
-        server.start();
+        try {
+            server.start();
 
-        server.stop();
+            server.stop();
+        } catch (ServerException e) {
+            System.err.println(e.getMessage());
+        }
+
     }
 
 }

@@ -1,5 +1,7 @@
 package ftp.client;
 
+import ftp.exceptions.ConnectionException;
+import ftp.exceptions.FtpException;
 import ftp.util.FileItem;
 import ftp.util.QueryType;
 
@@ -23,9 +25,9 @@ public class ClientImpl implements Client {
     }
 
     @Override
-    public void connect() throws IOException {
+    public void connect() throws IOException, FtpException {
         if (socket != null) {
-            throw new RuntimeException("Already connected");
+            throw new ConnectionException("Client already connected");
         }
         int tryCount = 50;
         for (int i = 0; i < tryCount && socket == null; i++) {
@@ -33,7 +35,7 @@ public class ClientImpl implements Client {
                 socket = new Socket(host, port);
             } catch (ConnectException e) {
                 if (i == tryCount - 1)
-                    throw new RuntimeException("Cannot connect");
+                    throw new ConnectionException("Cannot connect");
                 System.out.println("Cannot connect. Trying again");
             }
         }
@@ -45,16 +47,16 @@ public class ClientImpl implements Client {
     }
 
     @Override
-    public void disconnect() throws IOException {
+    public void disconnect() throws IOException, FtpException {
         if (socket == null) {
-            throw new RuntimeException("not connected");
+            throw new ConnectionException("Client is not connected");
         }
         socket.close();
         System.out.println("Client disconnected");
     }
 
     @Override
-    public List<FileItem> executeList(String path) throws IOException {
+    public List<FileItem> executeList(String path) throws IOException, FtpException {
         if (socket == null || socket.isClosed()) {
             connect();
         }
@@ -71,7 +73,7 @@ public class ClientImpl implements Client {
     }
 
     @Override
-    public FileContent executeGet(String path) throws IOException {
+    public FileContent executeGet(String path) throws IOException, FtpException {
         if (socket == null || socket.isClosed()) {
             connect();
         }

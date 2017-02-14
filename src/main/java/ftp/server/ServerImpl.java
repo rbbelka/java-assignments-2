@@ -1,5 +1,8 @@
 package ftp.server;
 
+import ftp.exceptions.FtpException;
+import ftp.exceptions.IllegalQueryException;
+import ftp.exceptions.ServerException;
 import ftp.util.QueryType;
 
 import java.io.*;
@@ -24,13 +27,13 @@ public class ServerImpl implements Server, Runnable {
     }
 
     @Override
-    public void start() {
+    public void start() throws ServerException {
         try {
             serverSocket = new ServerSocket(port);
             active = true;
             System.out.println("Server started to listen on port " + port);
         } catch (IOException e) {
-            System.out.println("Could not listen on port " + port);
+            throw new ServerException("Could not listen on port " + port);
         }
 
         while (active) {
@@ -48,9 +51,9 @@ public class ServerImpl implements Server, Runnable {
     }
 
     @Override
-    public void stop() {
+    public void stop() throws ServerException {
         if (serverSocket == null) {
-            throw new RuntimeException("server already stopped");
+            throw new ServerException("Server already stopped");
         }
 
         try {
@@ -84,12 +87,12 @@ public class ServerImpl implements Server, Runnable {
                             break;
 
                         default:
-                            throw new RuntimeException("Wrong query type: " + queryType);
+                            throw new IllegalQueryException("Wrong query type: " + queryType);
                     }
             }
         }  catch (EOFException ignored) {
             // client disconnected
-        } catch (IOException e) {
+        } catch (IOException | IllegalQueryException e) {
             System.err.println(e.getMessage());
         } finally {
             try {
@@ -129,6 +132,10 @@ public class ServerImpl implements Server, Runnable {
 
     @Override
     public void run() {
-        start();
+        try {
+            start();
+        } catch (ServerException e) {
+            System.err.println(e.getMessage());
+        }
     }
 }
