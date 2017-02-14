@@ -2,7 +2,6 @@ package ftp.client;
 
 import ftp.util.FileItem;
 import ftp.util.QueryType;
-import org.apache.commons.io.input.BoundedInputStream;
 
 import java.io.*;
 import java.net.ConnectException;
@@ -72,7 +71,7 @@ public class ClientImpl implements Client {
     }
 
     @Override
-    public InputStream executeGet(String path) throws IOException {
+    public FileContent executeGet(String path) throws IOException {
         if (socket == null || socket.isClosed()) {
             connect();
         }
@@ -80,6 +79,9 @@ public class ClientImpl implements Client {
         output.writeUTF(path);
         output.flush();
 
-        return new BoundedInputStream(input, input.readLong());
+        int size = (int) input.readLong();
+        byte[] content = new byte [size];
+        input.read(content);
+        return new FileContent(path, size, content);
     }
 }

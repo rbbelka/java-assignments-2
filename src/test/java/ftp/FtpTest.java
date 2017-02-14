@@ -2,6 +2,7 @@ package ftp;
 
 import ftp.client.Client;
 import ftp.client.ClientImpl;
+import ftp.client.FileContent;
 import ftp.util.FileItem;
 import ftp.server.ServerImpl;
 import ftp.server.Server;
@@ -10,7 +11,6 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
@@ -95,9 +95,9 @@ public class FtpTest {
             Client client = new ClientImpl(HOST, PORT + 2);
             client.connect();
 
-            InputStream received = client.executeGet(RESOURCES + TEST_DIR + FILE1);
+            FileContent received = client.executeGet(RESOURCES + TEST_DIR + FILE1);
             File receivedFile = new File(RESOURCES + RECEIVED);
-            Files.copy(received, receivedFile.toPath());
+            FileUtils.writeByteArrayToFile(receivedFile, received.getContent());
 
             assertEquals("file size differ", expected.length(), receivedFile.length());
             assertTrue("file content differ", FileUtils.contentEquals(expected, receivedFile));
@@ -167,5 +167,4 @@ public class FtpTest {
 
         server.stop();
     }
-
 }

@@ -2,12 +2,11 @@ package ftp.client;
 
 import ftp.util.FileItem;
 import ftp.util.QueryType;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
@@ -45,33 +44,36 @@ public class ClientMain {
         }
         try (Scanner scanner = new Scanner(System.in)) {
             while (scanner.hasNextLine()) {
-                String command = scanner.next();
+                String[] input = scanner.nextLine().split(" ");
+                String command = (input.length > 0) ? input[0] : "";
+                String path = (input.length > 1) ? input[1] : "";
                 try {
                     switch (QueryType.valueOf(command.toUpperCase())) {
                         case EXIT:
                             client.disconnect();
                             return;
                         case LIST:
-                            String dirPath = scanner.next();
-                            List<FileItem> files = client.executeList(dirPath);
+                            if (path.isEmpty()) {
+                                path = ".";
+                            }
+                            List<FileItem> files = client.executeList(path);
                             System.out.println("Found " + files.size() + " files");
                             for (FileItem file : files)
                                 System.out.println(file.getName() + " " + file.isDirectory());
                             break;
                         case GET:
-                            String filePath = scanner.next();
-                            String filename = Paths.get(filePath).getFileName().toString();
+                            String filename = Paths.get(path).getFileName().toString();
                             File file = new File(dir, filename);
                             try {
-                                InputStream result = client.executeGet(filePath);
-                                if (result.available() > 0) {
-                                    Files.copy(result, file.toPath());
-                                    System.out.println("Downloaded " + filePath);
+                                FileContent result = client.executeGet(path);
+                                if (result.getSize() > 0) {
+                                    FileUtils.writeByteArrayToFile(file, result.getContent());
+                                    System.out.println("Downloaded " + path);
                                 } else {
-                                    System.out.println("File " + filePath + " doesn't exist");
+                                    System.out.println("File " + path + " doesn't exist");
                                 }
                             } catch (FileAlreadyExistsException e) {
-                                System.out.println("File " + filePath + " already exists");
+                                System.out.println("File " + path + " already exists");
                             }
                             break;
                         default:
