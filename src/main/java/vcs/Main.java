@@ -21,14 +21,14 @@ public class Main {
     public static void main(String[] args) {
 
         if (args.length < 1) {
-            inputError();
+            usage();
             return;
         }
 
         String commandName = args[0];
         Command command = CommandFactory.createCommand(commandName);
         if (command == null) {
-            inputError();
+            usage();
             return;
         }
 
@@ -56,8 +56,10 @@ public class Main {
         }
     }
 
-    private static void inputError() {
-        System.out.println("Incorrect input");
+    private static void usage() {
+        System.out.println("Incorrect input.");
+        System.out.println("Usage: <cmd> <args>");
+        System.out.println("List of commands: init, status, clean, log, add, reset, rm, commit, checkout, branch, merge.");
     }
 
     private static void initError() {
