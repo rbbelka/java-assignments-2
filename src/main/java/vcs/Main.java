@@ -59,7 +59,7 @@ public class Main {
     private static void usage() {
         System.out.println("Incorrect input.");
         System.out.println("Usage: <cmd> <args>");
-        System.out.println("List of commands: init, status, clean, log, add, reset, rm, commit, checkout, branch, merge.");
+        System.out.println("List of commands: init, status, clean, log, add, reset, rm, commit, checkout (-r), branch (-d), merge.");
     }
 
     private static void initError() {
