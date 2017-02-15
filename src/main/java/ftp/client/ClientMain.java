@@ -13,12 +13,17 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * Main class to run client
- */
+ * Main class to run client.
+ * Creates instance of client and connects it to host and port given ad args.
+ *
+ * Executes queries from input :
+ *   exit - disconnect and stop
+ *   list <folder> - lists files and folders inside given folder on host
+ *   get <file> - downloads file from host
+ **/
 
 public class ClientMain {
 
-//    private static final String dir = "src/test/resources/downloads";
     private static final String dir = ".";
 
     public static void main(String[] args) {

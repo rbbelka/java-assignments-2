@@ -1,7 +1,6 @@
 package ftp.client;
 
 import ftp.exceptions.ConnectionException;
-import ftp.exceptions.FtpException;
 import ftp.util.FileItem;
 import ftp.util.QueryType;
 
@@ -19,13 +18,27 @@ public class ClientImpl implements Client {
     private DataInputStream input;
     private DataOutputStream output;
 
+
+    /**
+     * Creates instance of client which will be connecting
+     * to the specified port number on the named host.
+     *
+     * @param host address of host server
+     * @param port port on host server
+     */
     public ClientImpl(String host, int port) {
         this.host = host;
         this.port = port;
     }
 
+    /**
+     * Connects client to host
+     *
+     * @exception  IOException  if an I/O error occurs in work with socket.
+     * @exception ConnectionException if can't connect to given host
+     */
     @Override
-    public void connect() throws IOException, FtpException {
+    public void connect() throws IOException, ConnectionException {
         if (socket != null) {
             throw new ConnectionException("Client already connected");
         }
@@ -46,8 +59,14 @@ public class ClientImpl implements Client {
 
     }
 
+    /**
+     * Disconnects client from host
+     *
+     * @exception  IOException  if an I/O error occurs in work with socket.
+     * @exception ConnectionException if not connected
+     */
     @Override
-    public void disconnect() throws IOException, FtpException {
+    public void disconnect() throws IOException, ConnectionException {
         if (socket == null) {
             throw new ConnectionException("Client is not connected");
         }
@@ -55,8 +74,18 @@ public class ClientImpl implements Client {
         System.out.println("Client disconnected");
     }
 
+    /**
+     * Sends list query to host
+     *
+     * @param path path of folder to list
+     *
+     * @return list of files or folders in given path on host
+     *
+     * @exception  IOException  if an I/O error occurs in work with socket or streams.
+     * @exception ConnectionException if not connected and can't connect
+     */
     @Override
-    public List<FileItem> executeList(String path) throws IOException, FtpException {
+    public List<FileItem> executeList(String path) throws IOException, ConnectionException {
         if (socket == null || socket.isClosed()) {
             connect();
         }
@@ -72,8 +101,18 @@ public class ClientImpl implements Client {
         return fileItems;
     }
 
+    /**
+     * Sends get query to host
+     *
+     * @param path path of file to download
+     *
+     * @return content of asked file
+     *
+     * @exception  IOException  if an I/O error occurs in work with socket or streams.
+     * @exception ConnectionException if not connected and can't connect
+     */
     @Override
-    public FileContent executeGet(String path) throws IOException, FtpException {
+    public FileContent executeGet(String path) throws IOException, ConnectionException {
         if (socket == null || socket.isClosed()) {
             connect();
         }

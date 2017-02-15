@@ -1,7 +1,7 @@
 package ftp.client;
 
 /**
- * @author natalia on 14.02.17.
+ * Keeps content of file, name and size of it
  */
 public class FileContent {
     private String filename;
