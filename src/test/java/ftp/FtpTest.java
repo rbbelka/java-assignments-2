@@ -9,7 +9,10 @@ import ftp.util.FileItem;
 import ftp.server.ServerImpl;
 import ftp.server.Server;
 import org.apache.commons.io.FileUtils;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,11 +26,14 @@ import static org.junit.Assert.assertTrue;
 
 public class FtpTest {
 
+    @Rule
+    public final TemporaryFolder folder = new TemporaryFolder();
+
     private static final int PORT = 8080;
     private static final String HOST = "localhost";
-    private static final String RESOURCES = "src/test/resources/";
-    private static final String TEST_DIR = "test/";
-    private static final String EMPTY = "dir1/empty";
+//    private static final String RESOURCES = "src/test/resources/";
+//    private static final String TEST_DIR = "test/";
+    private static final String EMPTY = "empty";
     private static final String DIR1 = "dir1";
     private static final String FILE1 = "file1";
     private static final String FILE2 = "file2";
@@ -38,7 +44,18 @@ public class FtpTest {
             , new FileItem(FILE2, false)
             , new FileItem(DIR1, true)
     );
+    private File empty;
+    private File file1;
 
+    @Before
+    public void SetUp() throws IOException {
+        file1 = folder.newFile(FILE1);
+        folder.newFile(FILE2);
+        folder.newFolder(DIR1);
+        folder.newFile(DIR1 + "/" + FILE1NDIR);
+        empty = folder.newFolder(DIR1, EMPTY);
+        FileUtils.writeStringToFile(file1, "some text");
+    }
 
     @Test
     public void testListEmpty() throws IOException, InterruptedException, FtpException {
@@ -49,7 +66,7 @@ public class FtpTest {
             Client client = new ClientImpl(HOST, PORT);
             client.connect();
 
-            List<FileItem> list = client.executeList(RESOURCES + TEST_DIR + EMPTY);
+            List<FileItem> list = client.executeList(empty.getPath());
             assertEquals(Collections.emptyList(), list);
 
             client.disconnect();
@@ -70,7 +87,7 @@ public class FtpTest {
             Client client = new ClientImpl(HOST, PORT + 1);
             client.connect();
 
-            List<FileItem> list = client.executeList(RESOURCES + TEST_DIR);
+            List<FileItem> list = client.executeList(folder.getRoot().getPath());
             assertEquals("list sizes doesn't match", EXPECTED_LIST.size(), list.size());
             assertTrue("file lists are different",
                     Arrays.deepEquals(
@@ -91,18 +108,16 @@ public class FtpTest {
         Thread tserver = new Thread(server);
         tserver.start();
 
-        File expected = new File(RESOURCES + TEST_DIR + FILE1);
-
         try {
             Client client = new ClientImpl(HOST, PORT + 2);
             client.connect();
 
-            FileContent received = client.executeGet(RESOURCES + TEST_DIR + FILE1);
-            File receivedFile = new File(RESOURCES + RECEIVED);
+            FileContent received = client.executeGet(file1.getPath());
+            File receivedFile = folder.newFile(RECEIVED);
             FileUtils.writeByteArrayToFile(receivedFile, received.getContent());
 
-            assertEquals("file size differ", expected.length(), receivedFile.length());
-            assertTrue("file content differ", FileUtils.contentEquals(expected, receivedFile));
+            assertEquals("file size differ", file1.length(), receivedFile.length());
+            assertTrue("file content differ", FileUtils.contentEquals(file1, receivedFile));
 
             Files.delete(receivedFile.toPath());
             client.disconnect();
@@ -120,7 +135,7 @@ public class FtpTest {
         Thread tserver = new Thread(server);
         tserver.start();
 
-        final File expected = new File(RESOURCES + TEST_DIR + FILE1);
+        final File expected = new File(FILE1);
 
         int clientsQuantity = 10;
         for (int i = 0; i < clientsQuantity; i++) {
@@ -129,7 +144,7 @@ public class FtpTest {
                     Client client = new ClientImpl(HOST, PORT + 3);
                     client.connect();
 
-                    List<FileItem> list = client.executeList(RESOURCES + TEST_DIR);
+                    List<FileItem> list = client.executeList(folder.getRoot().getPath());
                     assertEquals("list sizes doesn't match", EXPECTED_LIST.size(), list.size());
                     assertTrue("file lists are different",
                             Arrays.deepEquals(
@@ -158,9 +173,9 @@ public class FtpTest {
             Client client = new ClientImpl(HOST, PORT + 4);
             client.connect();
 
-            List<FileItem> list = client.executeList(RESOURCES + TEST_DIR);
+            List<FileItem> list = client.executeList(folder.getRoot().getPath());
 
-            List<FileItem> list2 = client.executeList(RESOURCES + TEST_DIR);
+            List<FileItem> list2 = client.executeList(folder.getRoot().getPath());
 
             client.disconnect();
         } catch (IOException e) {
