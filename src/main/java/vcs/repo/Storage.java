@@ -141,7 +141,7 @@ public class Storage implements Serializable {
         }
     }
 
-    public void merge(int fromRevision, int toRevision, int baseRevision, int nextRevision) throws VcsException {
+    public void merge(int fromRevision, int toRevision, int baseRevision, int nextRevision) throws MergeConflictException {
         Snapshot from = getSnapshot(fromRevision);
         Snapshot to = getSnapshot(toRevision);
         Snapshot base = getSnapshot(baseRevision);

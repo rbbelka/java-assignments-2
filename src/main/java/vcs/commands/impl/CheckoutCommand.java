@@ -17,6 +17,7 @@ public class CheckoutCommand implements Command {
      * else checks out by given branch.
      *
      * @throws WrongNumberOfArgumentsException if no args provided.
+     * @throws RevisionNotSpecifiedException if revision to checkout is not specified
      */
     public void execute(Repository repo, List<String> args) throws IOException, VcsException {
         if (args.size() == 0) {

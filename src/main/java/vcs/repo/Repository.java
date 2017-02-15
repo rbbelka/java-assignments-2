@@ -68,7 +68,7 @@ public class Repository implements Serializable {
         System.out.println("Committed revision " + id + " to branch " + currentBranch.getName());
     }
 
-    public void checkoutBranch(String name) throws VcsException, IOException {
+    public void checkoutBranch(String name) throws IOException, BranchNotFoundException {
         Branch branch = branches.get(name);
         if (branch == null) {
             throw new BranchNotFoundException("Checkout failed: branch not found");
@@ -79,7 +79,7 @@ public class Repository implements Serializable {
         System.out.println("Checked out branch " + currentBranch.getName());
     }
 
-    public void checkoutRevision(String id) throws VcsException, IOException {
+    public void checkoutRevision(String id) throws IOException, RevisionNotFoundException {
         Revision revision = revisions.get(Integer.parseInt(id));
         if (revision == null) {
             throw new RevisionNotFoundException("Checkout failed: revision not found");
@@ -94,7 +94,7 @@ public class Repository implements Serializable {
         System.out.println("Checked out revision " + revision.getId());
     }
 
-    public void createBranch(String name) throws VcsException {
+    public void createBranch(String name) throws RevisionNotFoundException, BranchAlreadyExistsException {
         if (currentRevision == 0) {
             throw new RevisionNotFoundException("There is no commit to create a branch from");
         }
@@ -107,7 +107,7 @@ public class Repository implements Serializable {
         }
     }
 
-    public void deleteBranch(String name) throws VcsException {
+    public void deleteBranch(String name) throws CurrentBranchDeletionException, BranchNotFoundException {
         if (name.equals(currentBranch.getName())) {
             throw new CurrentBranchDeletionException("Delete failed: can't delete current branch");
         }
@@ -117,7 +117,7 @@ public class Repository implements Serializable {
         System.out.println("Branch " + name + " deleted");
     }
 
-    public void merge(String branchToMerge, String message) throws VcsException, IOException {
+    public void merge(String branchToMerge, String message) throws IOException, BranchNotFoundException, MergeConflictException {
         Branch branch = branches.get(branchToMerge);
         if (branch == null) {
             throw new BranchNotFoundException("Merge failed: branch not found");

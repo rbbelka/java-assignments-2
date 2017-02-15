@@ -15,6 +15,8 @@ public class BranchCommand implements Command {
      * If no args provided prints current branch.
      * If passed option -d deletes given branch,
      * else creates branch with given name.
+     *
+     * @throws BranchNotSpecifiedException if branch to delete is not specified
      */
     public void execute(Repository repo, List<String> args) throws VcsException {
         if (args.size() == 0) {
