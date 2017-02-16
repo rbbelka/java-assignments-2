@@ -114,8 +114,12 @@ public class ClientImpl implements Client {
         }
         Path filePath = path.resolve(fileInfo.getName());
         File file = filePath.toFile();
-        RandomAccessFile newFile = new RandomAccessFile(file, "rw");
         long fileSize = fileInfo.getSize();
+        downloadFile(fileId, fileSize, filePath, file);
+    }
+
+    private void downloadFile(int fileId, long fileSize, Path filePath, File file) throws IOException, TorrentException {
+        RandomAccessFile newFile = new RandomAccessFile(file, "rw");
         newFile.setLength(fileSize);
 
         int partNumber = (int) ((fileSize + BLOCK_SIZE - 1) / BLOCK_SIZE);
@@ -138,28 +142,33 @@ public class ClientImpl implements Client {
                 }
                 List<Integer> fileParts = clientLeecher.executeStat(fileId);
                 for (int part : fileParts) {
-                    if (!availableParts.contains(part)) {
-                        newFile.seek(part * BLOCK_SIZE);
-                        int partSize = BLOCK_SIZE;
-                        if (part == partNumber - 1) {
-                            partSize = (int) (fileSize % BLOCK_SIZE);
-                        }
-                        byte[] buffer;
-                        try {
-                            buffer = clientLeecher.executeGet(fileId, part);
-                        } catch (IOException e) {
-                            continue;
-                        }
-                        newFile.write(buffer, 0, partSize);
-                        availableParts.add(part);
-                        clientState.addFilePart(fileId, part, filePath);
-                        tracker.executeUpdate(clientSeeder.getServerSocketPort(),
-                                clientState.getAvailableFileIds());
-                    }
+                    getPartFromSeeder(fileId, filePath, newFile, partNumber, availableParts, part);
                 }
             }
         }
         newFile.close();
+    }
+
+    private void getPartFromSeeder(int fileId, Path filePath, RandomAccessFile newFile, int partNumber,
+                                   Set<Integer> availableParts, int part) throws IOException {
+        if (!availableParts.contains(part)) {
+            newFile.seek(part * BLOCK_SIZE);
+            int partSize = BLOCK_SIZE;
+            if (part == partNumber - 1) {
+                partSize = (int) (newFile.length() % BLOCK_SIZE);
+            }
+            byte[] buffer;
+            try {
+                buffer = clientLeecher.executeGet(fileId, part);
+            } catch (IOException e) {
+                return;
+            }
+            newFile.write(buffer, 0, partSize);
+            availableParts.add(part);
+            clientState.addFilePart(fileId, part, filePath);
+            tracker.executeUpdate(clientSeeder.getServerSocketPort(),
+                    clientState.getAvailableFileIds());
+        }
     }
 
     @Override
