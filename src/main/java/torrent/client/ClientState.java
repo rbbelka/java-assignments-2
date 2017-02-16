@@ -12,12 +12,13 @@ import java.util.*;
 
 /**
  * Stores state of client:
- *  which file parts present on client
- *  paths of these files
- *  files in queue to download
+ * which file parts present on client
+ * paths of these files
+ * files in queue to download
  */
 public class ClientState {
 
+    private static final int PERCENTS = 100;
     private Map<Integer, BitSet> availableFileParts;
     private Map<Integer, Path> filesPaths;
     private final Map<InetAddress, List<Integer>> toDownloadFiles = new HashMap<>();
@@ -152,4 +153,12 @@ public class ClientState {
     public List<Integer> getToDownloadFilesWithIp(byte[] ip) throws UnknownHostException {
         return toDownloadFiles.get(InetAddress.getByAddress(ip));
     }
+
+    int getProgress(int id) {
+        if (availableFileParts.containsKey(id)) {
+            return availableFileParts.get(id).cardinality() * PERCENTS / availableFileParts.size();
+        }
+        return 0;
+    }
+
 }

@@ -180,4 +180,9 @@ public class ClientImpl implements Client {
     public void restore() throws IOException {
         clientState.restore();
     }
+
+    @Override
+    public int getProgress(int id) {
+        return clientState.getProgress(id);
+    }
 }
