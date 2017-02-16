@@ -58,6 +58,10 @@ public class Repository implements Serializable {
         return getRevisionById(currentRevision);
     }
 
+    public int getCurrentRevisionId() {
+        return currentRevision;
+    }
+
     public boolean checkInit() {
         return new File(getInitFile()).exists();
     }

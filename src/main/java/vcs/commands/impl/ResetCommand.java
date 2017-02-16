@@ -1,6 +1,7 @@
 package vcs.commands.impl;
 
 import vcs.commands.Command;
+import vcs.exceptions.RevisionNotFoundException;
 import vcs.exceptions.VcsException;
 import vcs.exceptions.WrongNumberOfArgumentsException;
 import vcs.repo.Repository;
@@ -11,8 +12,7 @@ import java.util.List;
 public class ResetCommand  implements Command {
 
     /**
-     * Reset given files state in {@link Repository},
-     * removes them from controlled.
+     * Reset given files content to latest revision.
      *
      * @throws WrongNumberOfArgumentsException if no arguments provided.
      */
@@ -20,8 +20,12 @@ public class ResetCommand  implements Command {
         if (args.size() == 0) {
             throw new WrongNumberOfArgumentsException("Files to reset are not specified");
         }
+        int currentRevision = repo.getCurrentRevisionId();
+        if (currentRevision == 0) {
+            throw new RevisionNotFoundException("No revision to reset file");
+        }
         for (String arg : args) {
-            boolean reset = repo.getStorage().resetFile(arg);
+            boolean reset = repo.getStorage().resetFile(arg, currentRevision);
             if (reset)
                 System.out.println("Reset " + arg);
         }

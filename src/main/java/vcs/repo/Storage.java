@@ -2,7 +2,6 @@ package vcs.repo;
 
 import org.apache.commons.io.FileUtils;
 import vcs.exceptions.MergeConflictException;
-import vcs.exceptions.VcsException;
 import vcs.util.Util;
 
 import java.io.File;
@@ -48,13 +47,24 @@ public class Storage implements Serializable {
         return false;
     }
 
-    public boolean resetFile(String filename) throws IOException {
-        Util.removeFileAndHashFromCurrentDir(filename, repoDir, curDir);
-        return controlledFiles.remove(filename);
+    public boolean resetFile(String filename, int revision) throws IOException {
+        if (controlledFiles.contains(filename)) {
+            FileUtils.deleteQuietly(new File(repoDir, filename));
+            FileUtils.deleteQuietly(new File(curDir, filename));
+            Snapshot snapshot = getSnapshot(revision);
+            if (snapshot.contains(filename)) {
+                String hash = snapshot.get(filename);
+                FileUtils.copyFile(new File(getStorageDir(), hash), new File(repoDir, filename));
+                FileUtils.copyFile(new File(getStorageDir(), hash), new File(curDir, filename));
+            }
+            return true;
+        }
+        return false;
     }
 
     public boolean removeFile(String filename) throws IOException {
-        resetFile(filename);
+        Util.removeFileAndHashFromCurrentDir(filename, repoDir, curDir);
+        controlledFiles.remove(filename);
         return Files.deleteIfExists(Paths.get(repoDir, filename));
     }
 
