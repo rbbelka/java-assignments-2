@@ -11,6 +11,9 @@ import java.net.UnknownHostException;
 import java.nio.file.NoSuchFileException;
 import java.util.List;
 
+/**
+ * Provides cli to client
+ */
 public class ClientMain {
 
     public static void main(String[] args) {

@@ -13,6 +13,9 @@ import java.util.BitSet;
 import static torrent.impl.Constants.BLOCK_SIZE;
 import static torrent.impl.Constants.ClientQueryType;
 
+/**
+ * Handles queries from other clients
+ */
 public class ClientSeederHandler implements Runnable {
 
     private final Socket socket;

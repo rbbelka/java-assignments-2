@@ -18,13 +18,12 @@ import java.util.*;
 
 import static torrent.impl.Constants.BLOCK_SIZE;
 
+/**
+ * Executes commands from cli
+ */
 public class ClientImpl implements Client {
     private static final String DOWNLOADS_PATH = "downloads";
     private static final long DELAY = 1000;
-
-    private static final String WRONG_ARGUMENTS_NUMBER = "Wrong number of arguments of command ";
-    private static final String WRONG_TRACKER_ADDRESS = "Wrong tracker address format: ";
-
     private final TrackerEmu tracker = new TrackerEmuImpl();
     private final ClientState clientState;
     private final ClientSeeder clientSeeder;

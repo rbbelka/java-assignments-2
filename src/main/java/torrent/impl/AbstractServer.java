@@ -7,6 +7,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Function;
 
+/**
+ * Handles incoming connections
+ */
 public abstract class AbstractServer implements Server {
 
     private final int port;

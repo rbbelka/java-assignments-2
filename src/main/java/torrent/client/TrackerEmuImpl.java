@@ -13,6 +13,9 @@ import java.util.List;
 
 import static torrent.impl.Constants.ServerQueryType;
 
+/**
+ * Sends queries from client to tracker and get responses
+ */
 public class TrackerEmuImpl implements TrackerEmu {
     private Socket socket;
     private DataInputStream input;

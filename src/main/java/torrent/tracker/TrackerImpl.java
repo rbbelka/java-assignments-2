@@ -10,6 +10,9 @@ import java.util.function.Function;
 
 import static torrent.impl.Constants.SERVER_SAVE;
 
+/**
+ * Keeps info about tracker and serializes it to file between launches
+ */
 public class TrackerImpl extends AbstractServer {
     private List<FileInfo> fileList;
     private Map<ClientRoute, Set<Integer>> clients;

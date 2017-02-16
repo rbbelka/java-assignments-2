@@ -15,6 +15,10 @@ import java.util.stream.Collectors;
 
 import static torrent.impl.Constants.ServerQueryType;
 
+/**
+ * Handles queries from clients
+ * Handles removing not updating clients
+ */
 public class TrackerHandler implements Runnable {
 
     private final Socket clientSocket;

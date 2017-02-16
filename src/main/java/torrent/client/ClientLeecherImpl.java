@@ -12,6 +12,9 @@ import java.util.List;
 
 import static torrent.impl.Constants.ClientQueryType;
 
+/**
+ * Sends queries to another clients
+ */
 public class ClientLeecherImpl implements ClientLeecher {
     private Socket socket;
     private DataInputStream input;

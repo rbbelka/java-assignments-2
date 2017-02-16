@@ -4,6 +4,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+/**
+ * Dataclass keeping info about file
+ */
 public class FileInfo {
     private static final int HASH_BASE = 31;
 

@@ -10,6 +10,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+/**
+ * Stores state of client:
+ *  which file parts present on client
+ *  paths of these files
+ *  files in queue to download
+ */
 public class ClientState {
 
     private Map<Integer, BitSet> availableFileParts;
