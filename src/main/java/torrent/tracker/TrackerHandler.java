@@ -28,7 +28,9 @@ public class TrackerHandler implements Runnable {
     private final Timer removeClientTimer;
     private ServerQueryType[] queryTypes = ServerQueryType.values();
 
-    public TrackerHandler(Socket clientSocket, List<FileInfo> fileList, Map<ClientRoute, Set<Integer>> clientSeededFiles, Map<ClientRoute, TimerTask> toRemoveClientTasks) {
+    public TrackerHandler(Socket clientSocket, List<FileInfo> fileList,
+                          Map<ClientRoute, Set<Integer>> clientSeededFiles,
+                          Map<ClientRoute, TimerTask> toRemoveClientTasks) {
         this.clientSocket = clientSocket;
         this.fileList = fileList;
         this.clients = clientSeededFiles;
