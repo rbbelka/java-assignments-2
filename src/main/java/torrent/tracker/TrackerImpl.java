@@ -38,10 +38,22 @@ public class TrackerImpl extends AbstractServer {
             }
         }
         server.start();
-        try {
-            server.save();
-        } catch (IOException e) {
-            System.err.println("Can't save to savefile: " + e.getMessage());
+        try (Scanner scanner = new Scanner(System.in)) {
+            while (scanner.hasNextLine()) {
+                String[] input = scanner.nextLine().split(" ");
+                String command = (input.length > 0) ? input[0] : "";
+                if (command.equals("exit")) {
+                    try {
+                        server.stop();
+                        server.save();
+                    } catch (IOException e) {
+                        System.err.println("Can't save to savefile: " + e.getMessage());
+                    }
+                    break;
+                } else {
+                    System.out.println("Only command is <exit>");
+                }
+            }
         }
     }
 
