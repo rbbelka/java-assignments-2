@@ -115,7 +115,10 @@ public class ClientImpl implements Client {
         Path filePath = path.resolve(fileInfo.getName());
         File file = filePath.toFile();
         long fileSize = fileInfo.getSize();
+
+        System.out.println("Started downloading " + filePath.toString());
         downloadFile(fileId, fileSize, filePath, file);
+        System.out.println("Finished downloading " + filePath.toString());
     }
 
     private void downloadFile(int fileId, long fileSize, Path filePath, File file) throws IOException, TorrentException {
