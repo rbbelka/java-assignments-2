@@ -25,7 +25,7 @@ public class LogCommand implements Command {
             System.out.println("Current branch does not have any commits yet");
         }
 
-        System.out.println("Current branch: " + revisions.get(0).getBranchName());
+        System.out.println("Current branch: " + repo.getCurrentBranchName());
         for (Revision revision : revisions) {
             System.out.println(revision.getId() + ": " + revision.getCommitMessage());
         }
