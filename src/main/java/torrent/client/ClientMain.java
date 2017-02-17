@@ -27,6 +27,10 @@ public class ClientMain {
         }
 
         byte[] trackerAddress;
+        if (args.length < 2) {
+            usage();
+            return;
+        }
         try {
             trackerAddress = InetAddress.getByName(args[1]).getAddress();
         } catch (UnknownHostException e) {
