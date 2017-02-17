@@ -165,7 +165,7 @@ public class ClientImpl implements Client {
             }
             newFile.write(buffer, 0, partSize);
             availableParts.add(part);
-            clientState.addFilePart(fileId, part, filePath);
+            clientState.addFilePart(fileId, part, newFile.length(), filePath);
             tracker.executeUpdate(clientSeeder.getServerSocketPort(),
                     clientState.getAvailableFileIds());
         }
