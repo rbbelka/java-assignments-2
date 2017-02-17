@@ -40,6 +40,7 @@ public class LogTest extends VcsTest {
         repo.checkoutBranch("master");
         final String changed1 = "changed 1";
         FileUtils.writeStringToFile(file1, changed1);
+        repo.getStorage().addFile(name1);
         repo.commit(changed1);
         revisions = repo.getLog();
         Assert.assertEquals(revisions.size(), 3);
