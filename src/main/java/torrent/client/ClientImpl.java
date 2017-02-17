@@ -48,7 +48,7 @@ public class ClientImpl implements Client {
                     tracker.executeUpdate(clientSeeder.getServerSocketPort(),
                             clientState.getAvailableFileIds());
                 } catch (IOException e) {
-                    System.err.println("Client updater failed: " + e.getMessage());
+//                    System.err.println("Client updater failed: " + e.getMessage());
                 }
             }
         };

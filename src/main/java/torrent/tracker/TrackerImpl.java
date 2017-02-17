@@ -29,8 +29,20 @@ public class TrackerImpl extends AbstractServer {
     }
 
     public static void main(String[] args) {
-        Server server = new TrackerImpl();
+        TrackerImpl server = new TrackerImpl();
+        if (Constants.SERVER_SAVE.toFile().exists()) {
+            try {
+                server.restore();
+            } catch (IOException e) {
+                System.err.println("Can't restore from savefile: " + e.getMessage());
+            }
+        }
         server.start();
+        try {
+            server.save();
+        } catch (IOException e) {
+            System.err.println("Can't save to savefile: " + e.getMessage());
+        }
     }
 
     public void save() throws IOException {

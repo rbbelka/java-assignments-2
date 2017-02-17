@@ -34,7 +34,7 @@ public abstract class AbstractServer implements Server {
             while (true) {
                 synchronized (this) {
                     if (serverSocket == null || serverSocket.isClosed()) {
-                        System.err.println("Server socket is not available");
+                        //System.err.println("Server socket is not available");
                         break;
                     }
                 }
@@ -42,7 +42,7 @@ public abstract class AbstractServer implements Server {
                     Socket clientSocket = serverSocket.accept();
                     executorService.execute(handlerFactory.apply(clientSocket));
                 } catch (IOException e) {
-                    System.err.println("Exception during accepting client: " + e.getMessage());
+                    //System.err.println("Exception during accepting client: " + e.getMessage());
                 }
             }
         });
@@ -55,10 +55,10 @@ public abstract class AbstractServer implements Server {
             return;
         }
         try {
-            serverSocket.close();
             executorService.shutdown();
+            serverSocket.close();
         } catch (IOException e) {
-            System.err.println("Exception during closing ServerSocket: " + e.getMessage());
+            //System.err.println("Exception during closing ServerSocket: " + e.getMessage());
         }
         serverSocket = null;
     }

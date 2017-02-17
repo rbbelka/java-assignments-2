@@ -101,7 +101,7 @@ public class ClientMain {
     private static void handleGet(Client client, byte[] trackerAddress, int id) {
         try {
             client.addFileToDownload(trackerAddress, id);
-            System.out.println("File " + id + "added to download list");
+            System.out.println("File " + id + " added to download list");
         } catch (IOException e) {
             System.err.println("Get request exception: " + e.getMessage());
         }
@@ -111,7 +111,7 @@ public class ClientMain {
         try {
             client.start(trackerAddress);
             client.upload(path);
-            System.out.println("File " + path + "uploaded");
+            System.out.println("File " + path + " uploaded");
             client.stop();
         } catch (NoSuchFileException e) {
             System.err.println("Wrong file path");
