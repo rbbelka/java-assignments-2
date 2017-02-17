@@ -25,4 +25,6 @@ public interface Client {
     void save() throws IOException;
 
     void restore() throws IOException;
+
+    int getProgress(int id);
 }

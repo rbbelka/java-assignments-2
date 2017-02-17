@@ -168,7 +168,7 @@ public class ClientImpl implements Client {
             }
             newFile.write(buffer, 0, partSize);
             availableParts.add(part);
-            clientState.addFilePart(fileId, part, filePath);
+            clientState.addFilePart(fileId, part, newFile.length(), filePath);
             tracker.executeUpdate(clientSeeder.getServerSocketPort(),
                     clientState.getAvailableFileIds());
         }
@@ -182,5 +182,10 @@ public class ClientImpl implements Client {
     @Override
     public void restore() throws IOException {
         clientState.restore();
+    }
+
+    @Override
+    public int getProgress(int id) {
+        return clientState.getProgress(id);
     }
 }

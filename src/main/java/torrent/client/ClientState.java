@@ -12,37 +12,47 @@ import java.util.*;
 
 /**
  * Stores state of client:
- *  which file parts present on client
- *  paths of these files
- *  files in queue to download
+ * which file parts present on client
+ * paths of these files
+ * files in queue to download
  */
 public class ClientState {
 
+    private static final int PERCENTS = 100;
     private Map<Integer, BitSet> availableFileParts;
     private Map<Integer, Path> filesPaths;
+    private Map<Integer, Integer> filesSizes;
     private final Map<InetAddress, List<Integer>> toDownloadFiles = new HashMap<>();
 
     public ClientState() {
         availableFileParts = new HashMap<>();
         filesPaths = new HashMap<>();
+        filesSizes = new HashMap<>();
     }
 
     public void addWholeFile(int id, Path path) {
         long size = path.toFile().length();
         filesPaths.put(id, path);
         BitSet fileParts = new BitSet();
-        for (int i = 0; i < (size + Constants.BLOCK_SIZE - 1) / Constants.BLOCK_SIZE; i++) {
+        for (int i = 0; i < partsQuantity(size); i++) {
             fileParts.set(i);
         }
         availableFileParts.put(id, fileParts);
+        filesSizes.put(id, partsQuantity(size));
     }
 
-    public void addFilePart(int id, int part, Path path) {
+    public void addFilePart(int id, int part, long fileSize, Path path) {
         if (!filesPaths.containsKey(id)) {
             filesPaths.put(id, path);
-            availableFileParts.put(id, new BitSet());
+            int partsQuantity = partsQuantity(fileSize);
+            availableFileParts.put(id, new BitSet(partsQuantity));
+            filesSizes.put(id, partsQuantity);
         }
         availableFileParts.get(id).set(part);
+    }
+
+    private int partsQuantity(long size) {
+        return (int) ((size + Constants.BLOCK_SIZE - 1) / Constants.BLOCK_SIZE);
     }
 
     public void save() throws IOException {
@@ -63,6 +73,12 @@ public class ClientState {
                     output.writeInt(i);
                 }
             }
+        }
+
+        output.writeInt(filesSizes.size());
+        for (Map.Entry<Integer, Integer> fileSize : filesSizes.entrySet()) {
+            output.writeInt(fileSize.getKey());
+            output.writeInt(fileSize.getValue());
         }
 
         output.writeInt(filesPaths.size());
@@ -100,6 +116,13 @@ public class ClientState {
                 availableParts.set(input.readInt());
             }
             availableFileParts.put(id, availableParts);
+        }
+
+        int filesSizesSize = input.readInt();
+        for (int i = 0; i < filesSizesSize; i++) {
+            int id = input.readInt();
+            int size = input.readInt();
+            filesSizes.put(id, size);
         }
 
         int filesPathsSize = input.readInt();
@@ -152,4 +175,12 @@ public class ClientState {
     public List<Integer> getToDownloadFilesWithIp(byte[] ip) throws UnknownHostException {
         return toDownloadFiles.get(InetAddress.getByAddress(ip));
     }
+
+    int getProgress(int id) {
+        if (availableFileParts.containsKey(id)) {
+            return availableFileParts.get(id).cardinality() * PERCENTS / filesSizes.get(id);
+        }
+        return 0;
+    }
+
 }
