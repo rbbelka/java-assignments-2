@@ -118,7 +118,14 @@ public class Storage implements Serializable {
         return deleted;
     }
 
-    public void writeRevision(int revision) throws IOException {
+    public boolean writeRevision(int nextRevision, int currentRevision) throws IOException {
+        boolean differs = false;
+        Snapshot previous = new Snapshot();
+        if (currentRevision == 0) {
+            differs = true;
+        } else {
+            previous = getSnapshot(currentRevision);
+        }
         Snapshot snapshot = new Snapshot();
         final String storageDir = getStorageDir();
         for (String filePath : controlledFiles) {
@@ -129,10 +136,16 @@ public class Storage implements Serializable {
                 File storedFile = new File(storageDir, hash);
                 if (!storedFile.exists()) {
                     FileUtils.copyFile(file, storedFile);
+                    differs = true;
                 }
+            } else if (previous.contains(filePath)) {
+                differs = true;
             }
         }
-        snapshots.put(revision, snapshot);
+        if (differs) {
+            snapshots.put(nextRevision, snapshot);
+        }
+        return differs;
     }
 
     public void checkoutRevision(int revision) throws IOException {

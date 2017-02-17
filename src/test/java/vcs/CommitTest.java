@@ -24,4 +24,14 @@ public class CommitTest extends VcsTest {
         assertEquals("1", revision.getCommitMessage());
         assertEquals(1, revision.getId());
     }
+
+    @Test
+    public void testCommitNoChanges() throws IOException {
+        repo.commit("1");
+        repo.commit("1");
+        Revision revision = repo.getCurrentRevision();
+        assertEquals("1", revision.getCommitMessage());
+        assertEquals(1, revision.getId());
+
+    }
 }

@@ -67,9 +67,12 @@ public class Repository implements Serializable {
     }
 
     public void commit(String message) throws IOException {
-        int id = addRevision(message);
-        storage.writeRevision(id);
-        System.out.println("Committed revision " + id + " to branch " + currentBranch.getName());
+        if (storage.writeRevision(nextRevisionNumber, currentRevision)) {
+            addRevision(message);
+            System.out.println("Committed revision " + currentRevision + " to branch " + currentBranch.getName());
+        } else {
+            System.out.println("No changes to commit");
+        }
     }
 
     public void checkoutBranch(String name) throws IOException, BranchNotFoundException {
